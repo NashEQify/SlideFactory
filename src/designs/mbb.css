@@ -10,6 +10,7 @@ body {
   height: 900px;
 }
 .sf-slide {
+  --sf-font-text: Inter, Arial, sans-serif;
   font-family: Inter, Arial, sans-serif;
   position: relative;
   width: 1600px;

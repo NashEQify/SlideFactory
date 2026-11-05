@@ -70,7 +70,7 @@ try {
 }
 if (/<\/script/i.test(runtime)) throw Error('Runtime must not contain a literal script end tag.');
 const schemes = JSON.parse(schemesText);
-const editorVersion = '1.7.1',
+const editorVersion = '1.8.0',
   fingerprint = (value) =>
     createHash('sha256').update(value.replace(/\r\n/g, '\n'), 'utf8').digest('hex');
 const manifest = {

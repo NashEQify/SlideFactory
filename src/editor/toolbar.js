@@ -56,6 +56,8 @@ function createEditorChrome() {
   const chrome = document.createElement('div');
   chrome.id = 'sf-editor';
   chrome.dataset.sfTransient = '';
+  // Fonts the design embeds (@font-face) lead the font list.
+  const embeddedFonts = [...document.fonts].map((face) => face.family.replace(/['"]/g, ''));
   const tool = editorTool,
     group = (label, top, bottom, classes = '') =>
       `<div class="sf-tool-group ${classes}"><div class="sf-tool-row">${top}</div><div class="sf-tool-row">${bottom}</div><span class="sf-group-label">${label}</span></div>`;
@@ -67,7 +69,7 @@ function createEditorChrome() {
     <div class="sf-context" aria-label="Bearbeitungswerkzeuge">
       <div class="sf-tool-group sf-painter-group">${tool('painter', 'Format kopieren', 'painter', 'aria-pressed="false"')}<span class="sf-group-label">Format</span></div>
       ${group('Einfügen', tool('new-slide', 'Leere Folie einfügen', 'slide') + tool('text', 'Textfeld einfügen') + tool('insert', 'Bild einfügen', 'image'), tool('shapes', 'Form einfügen', 'shapes', 'aria-haspopup="dialog" aria-expanded="false"') + tool('replace', 'Bild ersetzen', 'replace', 'data-needs="image"') + tool('link', 'Folienlink einfügen', 'link', 'aria-haspopup="dialog" aria-expanded="false"') + tool('link-target', 'Linkziel ändern', 'link-target', 'data-needs="link" aria-haspopup="dialog" aria-expanded="false"'))}
-      ${group('Schrift', `<select id="sf-font-family" aria-label="Schriftart" data-needs="text">${['Arial', 'Calibri', 'Georgia', 'Times New Roman', 'Verdana', 'Courier New'].map((font) => `<option>${font}</option>`).join('')}</select><select id="sf-font-preset" aria-label="Schriftgröße" data-needs="text">${[8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 44, 48, 54, 60, 72, 96].map((size) => `<option value="${size}">${size} pt</option>`).join('')}</select>${tool('font-larger', 'Schrift vergrößern', 'font-larger', 'data-needs="text"')}${tool('font-smaller', 'Schrift verkleinern', 'font-smaller', 'data-needs="text"')}`, ['bold', 'italic', 'underline', 'strikeThrough', 'superscript', 'subscript', 'highlight', 'text-color'].map((action, i) => tool(action, ['Fett', 'Kursiv', 'Unterstrichen', 'Durchgestrichen', 'Hochgestellt', 'Tiefgestellt', 'Textmarker · Gelb', 'Textfarbe'][i], ['bold', 'italic', 'underline', 'strike', 'superscript', 'subscript', 'highlight', 'color'][i], 'data-needs="text"')).join(''), 'sf-font-group')}
+      ${group('Schrift', `<select id="sf-font-family" aria-label="Schriftart" data-needs="text">${[...new Set([...embeddedFonts, 'Arial', 'Calibri', 'Georgia', 'Times New Roman', 'Verdana', 'Courier New'])].map((font) => `<option>${font}</option>`).join('')}</select><select id="sf-font-preset" aria-label="Schriftgröße" data-needs="text">${[8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 40, 44, 48, 54, 60, 72, 96].map((size) => `<option value="${size}">${size} pt</option>`).join('')}</select>${tool('font-larger', 'Schrift vergrößern', 'font-larger', 'data-needs="text"')}${tool('font-smaller', 'Schrift verkleinern', 'font-smaller', 'data-needs="text"')}`, ['bold', 'italic', 'underline', 'strikeThrough', 'superscript', 'subscript', 'highlight', 'text-color'].map((action, i) => tool(action, ['Fett', 'Kursiv', 'Unterstrichen', 'Durchgestrichen', 'Hochgestellt', 'Tiefgestellt', 'Textmarker · Gelb', 'Textfarbe'][i], ['bold', 'italic', 'underline', 'strike', 'superscript', 'subscript', 'highlight', 'color'][i], 'data-needs="text"')).join(''), 'sf-font-group')}
       ${group(
         'Absatz',
         [
