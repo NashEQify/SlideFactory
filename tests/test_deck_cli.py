@@ -348,7 +348,7 @@ def test_inspect_keeps_data_labels_and_redacts_only_actual_asset_urls(deck):
     assert deck.read_bytes()==authored
 
 
-@pytest.mark.parametrize("name", ["consulting.html", "editorial.html"])
+@pytest.mark.parametrize("name", ["consulting.html", "editorial.html", "mbb.html"])
 def test_ready_builder_output_cli_roundtrip(name, tmp_path):
     ready = ROOT / "skills/slidefactory/assets" / name
     if not ready.exists():

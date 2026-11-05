@@ -544,7 +544,7 @@ def test_rich_note_baseline_guard(tmp_path, browser_factory):
 
 
 # TC-R10 (M3/M8, L4 positive) | INFRA: none
-@pytest.mark.parametrize("template", ["consulting.html", "editorial.html"])
+@pytest.mark.parametrize("template", ["consulting.html", "editorial.html", "mbb.html"])
 def test_complete_file_handoff(tmp_path, browser_factory, template):
     path, first, data_url, original = _native(tmp_path, template)
     page = browser_factory(path)

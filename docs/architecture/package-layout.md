@@ -14,11 +14,14 @@ SlideFactory/
     assets/editorial.html          design overview + editorial examples, editor
     assets/consulting-blank.html   design overview + one empty consulting slide
     assets/editorial-blank.html    design overview + one empty editorial slide
+    assets/mbb.html                design overview + Clean MBB examples, fonts, editor
+    assets/mbb-blank.html          design overview + one empty Clean MBB slide, fonts
     assets/editor-releases.json    trusted helper-side resource fingerprints
     references/                   HTML contract, focused operations, checks
     scripts/deck.py                stdlib-only checked file helper
   src/editor/                     shared document/interaction/image/UI source
   src/designs/                    independent styles, overview slides, four palettes
+  src/designs/mbb-fonts/           Clean MBB WOFF2 subsets (SIL OFL) and provenance
   src/templates/                  neutral whole-deck layout examples
   scripts/build-starter.mjs        one-file assembly; optional build-only minifier
   tests/                          real browser/download + source-edit checks

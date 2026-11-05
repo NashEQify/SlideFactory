@@ -161,10 +161,13 @@ one peer, not special-cased in runtime. Each supports at least dark/light and tw
 accent combinations. Farbschema UI selects colors only; **no template UI picker**.
 Templates are chosen by their file paths in chat.
 
-Ready assets: `consulting.html`, `editorial.html`, `consulting-blank.html` and
-`editorial-blank.html` in `skills/slidefactory/assets/`. Each blank file has the
-design overview slides plus one empty 1600×900 slide, empty notes/guidance and no
-authored image/font assets. Every starter opens with `data-sf-overview` slides
+Ready assets: `consulting.html`, `editorial.html`, `mbb.html` and their
+`*-blank.html` counterparts in `skills/slidefactory/assets/`. Clean MBB (`mbb`,
+added 2026-11-05) is a third peer extracted content-free from a private deck; it
+embeds Latin WOFF2 subsets of Zain and Inter (SIL OFL) from `src/designs/mbb-fonts/`
+and sets reading text at 24 px or more, markup at 16 px or more. Each blank file
+has the design overview slides plus one empty 1600×900 slide, empty notes/guidance
+and no authored images; only Clean MBB carries fonts. Every starter opens with `data-sf-overview` slides
 (type scale, colors, components, rules) from `src/designs/*-overview.html`;
 `deck.py new` drops them.
 Sources: src/editor/, src/designs/, src/templates/. Builder embeds the same eight

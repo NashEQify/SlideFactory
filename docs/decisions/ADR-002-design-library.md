@@ -3,6 +3,9 @@
 Status: proposed technical direction; the two-operation distinction and the name
 Clean MBB follow the user's clarification on 2026-11-04. This is a solve result,
 not an implemented library or a locked low-level implementation contract.
+Update 2026-11-05: the content-free Clean MBB starter (`mbb.html`,
+`mbb-blank.html`) is delivered; catalogue, style-role contracts and procedural
+apply remain open.
 
 ## Problem and current state
 

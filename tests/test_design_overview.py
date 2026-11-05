@@ -12,6 +12,8 @@ import sys
 
 import pytest
 
+from test_editor_e2e import browser_factory
+
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "skills/slidefactory/assets"
@@ -21,8 +23,12 @@ STARTERS = {
     "consulting-blank.html": "consulting",
     "editorial.html": "editorial",
     "editorial-blank.html": "editorial",
+    "mbb.html": "mbb",
+    "mbb-blank.html": "mbb",
 }
 OVERVIEW = ["design-type", "design-components", "design-rules"]
+# Clean MBB type floors (task 2): reading text at least 24 px, markup-only roles at least 16 px.
+MBB_MARKUP = {"kicker", "label", "badge", "tag", "chip", "deck-footer", "folio"}
 
 
 def _slides(source):
@@ -65,3 +71,31 @@ def test_new_deck_leaves_overview_out(name, tmp_path):
     meta = json.loads(re.search(r'<script id="sf-document" type="application/json">(.*?)</script>', source, re.S).group(1))
     assert set(meta["notes"]) == set(meta["guidance"]) == {identity for identity, _ in slides}
     subprocess.run([sys.executable, str(CLI), "validate", str(output)], check=True, capture_output=True)
+
+
+def test_mbb_type_scale_keeps_its_floors():
+    roles = _type_roles("mbb")
+    assert MBB_MARKUP <= set(roles)
+    for role, size in roles.items():
+        assert int(size) >= (16 if role in MBB_MARKUP else 24), role
+    for name in ("src/designs/mbb-overview.html", "src/templates/mbb.html"):
+        for size in re.findall(r"font-size:\s*(\d+)px", (ROOT / name).read_text()):
+            assert int(size) >= 24, name
+
+
+@pytest.mark.parametrize("name", ["mbb.html", "mbb-blank.html"])
+def test_mbb_renders_every_text_at_its_floor_with_embedded_fonts(name, tmp_path, browser_factory):
+    path = tmp_path / name
+    path.write_bytes((ASSETS / name).read_bytes())
+    page = browser_factory(path)
+    page.evaluate("document.fonts.ready")
+    assert page.evaluate("[...document.fonts].filter(f => f.status === 'loaded').map(f => f.family).sort()") == [
+        "Inter", "Inter", "Inter", "Zain", "Zain"]
+    too_small = page.evaluate("""markup => [...document.querySelectorAll('#sf-deck .sf-slide *')].flatMap(element => {
+      const own = [...element.childNodes].some(node => node.nodeType === 3 && node.textContent.trim());
+      if (!own) return [];
+      const size = parseFloat(getComputedStyle(element).fontSize);
+      const floor = element.closest(markup) ? 16 : 24;
+      return size < floor ? [`${element.textContent.trim().slice(0, 40)}: ${size}px`] : [];
+    })""", ",".join(f".{role}" for role in sorted(MBB_MARKUP)))
+    assert too_small == []
