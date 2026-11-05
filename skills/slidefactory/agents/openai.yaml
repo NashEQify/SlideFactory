@@ -1,0 +1,4 @@
+interface:
+  display_name: "SlideFactory"
+  short_description: "HTML-Präsentationen gemeinsam erstellen und gezielt ändern."
+  default_prompt: "Nutze $slidefactory für eine hochwertige HTML-Präsentation oder eine gezielte Änderung am gespeicherten Arbeitsstand."

@@ -1,0 +1,107 @@
+{
+  "1.0.0": {
+    "manifest": false,
+    "cssSha256": "9d5443b04037d759f8b6f6398318d1897bc16967ad6113f0a608c460ff0b3f21",
+    "runtimeSha256": "13f2ac36c546aabdbd78502380914a47823085a7562c7ca6f2beaa41cf92f8c8"
+  },
+  "1.1.0": {
+    "manifest": true,
+    "cssSha256": "82a71ec659585b623ea33b5c4fd7dc5727b69cf8929ddf2ef76e8d63b4ef2258",
+    "runtimeSha256": "4190a0b7d65ba53ace1713fdf81a165a3a2e76a887593246669eab84f1819ae6"
+  },
+  "1.1.1": {
+    "manifest": true,
+    "cssSha256": "e70425d4ac354f9a59beae9be3b2a76f6158be6f8116ccafc0290371e64d4ed9",
+    "runtimeSha256": "53496caf78f94bde5498a10457df3dec3cedebaff31c04e92e562b772f504454"
+  },
+  "1.1.2": {
+    "manifest": true,
+    "cssSha256": "e70425d4ac354f9a59beae9be3b2a76f6158be6f8116ccafc0290371e64d4ed9",
+    "runtimeSha256": "6595c4bd92fbd94f89e84f8252b265ea52477df6db726af0d856aab78249a033"
+  },
+  "1.2.0": {
+    "manifest": true,
+    "cssSha256": "bd00fd72639762d4de2bf071ad1e9d40285f737e7763f0acfe3eac3266622ca7",
+    "runtimeSha256": "71799d62106a7126643b3f9a953b3a77ee09cdd90399feec3c2a8437fa983092"
+  },
+  "1.2.1": {
+    "manifest": true,
+    "cssSha256": "415a0e3e009b9790d1541d9fc03716d23a6d30d7113a4ea5e0432c860e5ce416",
+    "runtimeSha256": "bb2a48ccaf492c68379d088a4ecc45ad1e2b0a2caeae99c2311d2feb873dde26"
+  },
+  "1.2.2": {
+    "manifest": true,
+    "cssSha256": "836d10d8ccf80d607e66fd460c2b2215a764261868c45516042de0a038520c7e",
+    "runtimeSha256": "aa1df0131b1899ec1957caadee2e41282f4f2eab627df1cfe64faa0a73c9b15b"
+  },
+  "1.2.3": {
+    "manifest": true,
+    "cssSha256": "41128a7403ebb39c40869057cd5525050d7ac3b21722cd0fa1210bf1a25c6ba6",
+    "runtimeSha256": "1de0a86d7c557285964f5d7fc4b947284a1992cd7a2f112082601a904988d7df"
+  },
+  "1.2.4": {
+    "manifest": true,
+    "cssSha256": "cd6a83b7bfba29ed8fcd97b3ee3d4600e31bd1f8738f46b9f905bd446bfe4840",
+    "runtimeSha256": "1de0a86d7c557285964f5d7fc4b947284a1992cd7a2f112082601a904988d7df"
+  },
+  "1.2.5": {
+    "manifest": true,
+    "cssSha256": "cd6a83b7bfba29ed8fcd97b3ee3d4600e31bd1f8738f46b9f905bd446bfe4840",
+    "runtimeSha256": "815004d7b897a07afa26f574424ac01f93f9aadbccf557783d020704ca0fc402"
+  },
+  "1.2.6": {
+    "manifest": true,
+    "cssSha256": "7be2f6c73278d3640aa4bbc97f13030ab09ed86935d1259a5d1a76ddcc239aee",
+    "runtimeSha256": "d08f496d14c835d61aee571ad495a439b02f0ddfe2df9b6f54dd71ce918f2ecf"
+  },
+  "1.2.7": {
+    "manifest": true,
+    "cssSha256": "4159ca16138189a99dbc12341ed938320c86134fd0e1776a9f30506f38dcdb63",
+    "runtimeSha256": "9889512e600ad0ad43907e4faea38f40c8f709865755346cf19f91153d8b2873"
+  },
+  "1.3.0": {
+    "manifest": true,
+    "cssSha256": "951dd416de051418e62fb7e13bc0bd64d8944b8cd5e8f10c32f5a99b56a5fcb4",
+    "runtimeSha256": "9f0863e6e455e5f37e8417c25cf1b2a4e0e1f51d88574380350b30557217cfb9"
+  },
+  "1.3.1": {
+    "manifest": true,
+    "cssSha256": "e80fbd6c19a10868c1b6482d5ba1786603dcca737d830bf8f3af0751a23479f2",
+    "runtimeSha256": "fa567a7686b3ead629a45af9e9385fec88ef94d1ac16ae577dc16a89930718be"
+  },
+  "1.3.2": {
+    "manifest": true,
+    "cssSha256": "e80fbd6c19a10868c1b6482d5ba1786603dcca737d830bf8f3af0751a23479f2",
+    "runtimeSha256": "9aa9e2c880ec767d44f24e55a0c76a6c9f47df46933dbc2db411979231c6609c"
+  },
+  "1.3.3": {
+    "manifest": true,
+    "cssSha256": "e80fbd6c19a10868c1b6482d5ba1786603dcca737d830bf8f3af0751a23479f2",
+    "runtimeSha256": "b2706efa9b7b06f0b87d6bba881d2dd4a6ec73764d1012c2f560661b5099c848"
+  },
+  "1.3.4": {
+    "manifest": true,
+    "cssSha256": "e80fbd6c19a10868c1b6482d5ba1786603dcca737d830bf8f3af0751a23479f2",
+    "runtimeSha256": "21fdb9b4faf0fd028a5bfd78665d23d8f0db64c1d45490f6dcfd90511d0d24d1"
+  },
+  "1.4.0": {
+    "manifest": true,
+    "cssSha256": "8b40b436fbdccdf795ead324645fc6db37d3a0e2ab8823c04e560840ff35d207",
+    "runtimeSha256": "a2bee4bb2bd67288973da3cc6b451f4418604926ecc3beba81ed06113ea3e298"
+  },
+  "1.5.0": {
+    "manifest": true,
+    "cssSha256": "8e45cf6144ddcfec3a1af53088f6cd8a5ddba3489cbecf138418ad0ac88cc89d",
+    "runtimeSha256": "6d62ea159c7bf0302a9871c79d16cf7f4ede4395ac5b23548b51c5f75e0b8bda"
+  },
+  "1.5.1": {
+    "manifest": true,
+    "cssSha256": "08c1b54c98dd003ddaf753f9a7513508b508b87400969a352dff374548cb0e01",
+    "runtimeSha256": "6a551239c65fa38b5976089cf9221316f7352fa9c8e77cf843ece7b433b0d8e6"
+  },
+  "1.6.0": {
+    "manifest": true,
+    "cssSha256": "08c1b54c98dd003ddaf753f9a7513508b508b87400969a352dff374548cb0e01",
+    "runtimeSha256": "29136979a68e11dffe929308451bb32a7825b179c063312756fa692dc804c117"
+  }
+}

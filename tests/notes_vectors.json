@@ -1,0 +1,65 @@
+[
+  {
+    "html": "",
+    "text": "",
+    "canonical": ""
+  },
+  {
+    "html": "<p></p>",
+    "text": "",
+    "canonical": "<p></p>"
+  },
+  {
+    "html": "<p>A</p><p></p>",
+    "text": "A\n",
+    "canonical": "<p>A</p><p></p>"
+  },
+  {
+    "html": "<p>A<br></p>",
+    "text": "A\n",
+    "canonical": "<p>A<br></p>"
+  },
+  {
+    "html": "<p>A&nbsp;B</p>",
+    "text": "A B",
+    "canonical": "<p>A B</p>"
+  },
+  {
+    "html": "<ul><li>A<ul><li>B</li></ul></li><li>C</li></ul>",
+    "text": "A\nB\nC",
+    "canonical": "<ul><li>A<ul><li>B</li></ul></li><li>C</li></ul>"
+  },
+  {
+    "html": "<p><strong>A</strong> &amp; B</p>",
+    "text": "A & B",
+    "canonical": "<p><strong>A</strong> &amp; B</p>"
+  },
+  {
+    "html": "<p><ul><li>A</li></ul></p>",
+    "invalid": true
+  },
+  {
+    "html": "before <b>bold</b> after",
+    "text": "before bold after",
+    "canonical": "<p>before <strong>bold</strong> after</p>"
+  },
+  {
+    "html": "<strong>A</strong><em>B</em>",
+    "text": "AB",
+    "canonical": "<p><strong>A</strong><em>B</em></p>"
+  },
+  {
+    "html": "<p>A</p>B",
+    "text": "A\nB",
+    "canonical": "<p>A</p><p>B</p>"
+  },
+  {
+    "html": "<p><span style=\"font-size:12.123456pt\">A</span></p>",
+    "text": "A",
+    "canonical": "<p><span style=\"font-size:12.123456pt\">A</span></p>"
+  },
+  {
+    "html": "<p>\u0000A</p>",
+    "invalid": true
+  }
+]

@@ -1,0 +1,37 @@
+# Local machine and agent state
+.agents/
+.codex/
+.aws/
+.forge-codex-boot.json
+.workflow-state/
+.env
+.env.*
+!.env.example
+node_modules/
+__pycache__/
+.pytest_cache/
+.observations/
+context/.continuity-*.lock
+context/session-handoff.md.bak
+
+# Private presentation workspaces and research copies belong outside this repo.
+/private/
+/decks/
+/reference-decks/
+/research-vendors/
+/outputs/
+/work/
+*.local.json
+
+# Forge working state stays local (process records, session context, workflows)
+/context/
+/docs/solve/
+/docs/build/
+/docs/reviews/
+/docs/tasks/
+/docs/fix/
+/docs/plan.yaml
+/docs/STRUCTURE.md
+/.claude/
+/workspace/
+/AGENTS.override.md

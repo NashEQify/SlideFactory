@@ -1,0 +1,6 @@
+{
+  "cyan-dark": {"label": "Cyan · Dunkel", "tokens": {"background": "#10252D", "text": "#F0F6F5", "muted": "#B8CCCC", "accent": "#75D9D0", "accent2": "#F2C078", "surface": "#1A343D", "border": "#36545D"}},
+  "cyan-light": {"label": "Cyan · Hell", "tokens": {"background": "#F5F8F6", "text": "#15323B", "muted": "#526C73", "accent": "#006F73", "accent2": "#9C4F13", "surface": "#E4EFEA", "border": "#B3C9C7"}},
+  "indigo-dark": {"label": "Indigo · Dunkel", "tokens": {"background": "#1B2236", "text": "#F3F4FA", "muted": "#C0C6DC", "accent": "#ADBCFF", "accent2": "#A5DECA", "surface": "#2A344D", "border": "#485677"}},
+  "indigo-light": {"label": "Indigo · Hell", "tokens": {"background": "#FAF9F5", "text": "#222E4A", "muted": "#5F6681", "accent": "#4259A8", "accent2": "#286A58", "surface": "#ECEEF5", "border": "#C4C8D8"}}
+}
