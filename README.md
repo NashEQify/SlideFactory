@@ -8,7 +8,7 @@ Arbeitsstand und das Ergebnis.
 
 [![CI](https://github.com/NashEQify/SlideFactory/actions/workflows/ci.yml/badge.svg)](https://github.com/NashEQify/SlideFactory/actions/workflows/ci.yml)
 
-**Editor 1.7.0.** Was der eingebettete Editor kann:
+**Editor 1.7.1.** Was der eingebettete Editor kann:
 
 - **Bearbeiten im Browser:** Text, Textboxen, Bilder (einfügen, ersetzen, zuschneiden),
   sechs Formen, Farben, Schriftgrößen für Mehrfachauswahl, Formatpinsel,
@@ -149,8 +149,14 @@ Skills aus `~/.agents/skills` laden, genügt ein Link auf diesen Ordner:
 ln -s "$PWD/skills/slidefactory" ~/.agents/skills/slidefactory
 ```
 
-Danach verwendest du ihn im Chat als `$slidefactory` und nennst die gewünschte
-Vorlagendatei. Änderungen am Repo gelten damit auch für die verknüpfte Version.
+Für Claude Code verknüpfst du denselben Ordner unter `~/.claude/skills`:
+
+```bash
+ln -s "$PWD/skills/slidefactory" ~/.claude/skills/slidefactory
+```
+
+Danach verwendest du ihn im Chat als `$slidefactory` (Codex) bzw. `/slidefactory`
+(Claude Code) und nennst die gewünschte Vorlagendatei. Änderungen am Repo gelten damit auch für die verknüpfte Version.
 
 Starte dort einen Chat und schreibe beispielsweise:
 
@@ -234,7 +240,7 @@ Recherche und Beratungsprozess liegen außerhalb dieses Technikpakets.
 3. Einen Pull Request öffnen (`gh pr create` oder auf GitHub).
 4. Die CI baut die Startdateien und führt alle Tests aus; gemergt wird erst bei Grün.
 
-Bei Änderungen in `src/` vor dem Commit `npm run build` ausführen und die
+Bei Änderungen in `src/` vor dem Commit `npm run format` und `npm run build` ausführen und die
 erzeugten Dateien unter `skills/slidefactory/assets/` mit committen.
 
 ## Lizenz

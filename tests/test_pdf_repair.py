@@ -217,7 +217,8 @@ def test_slow_projected_frame_progress_cancel_and_error(tmp_path, browser_factor
 
     popup = begin('cancel')
     page.wait_for_function('qaHeld.length===1')
-    popup.get_by_role('button', name='Abbrechen', exact=True).click()
+    # Cancel closes the popup; trigger it detached so the click itself cannot race the close.
+    popup.get_by_role('button', name='Abbrechen', exact=True).evaluate('button => setTimeout(() => button.click(), 0)')
     page.wait_for_function('qaLongTimers.size===0')
     assert popup.is_closed()
     page.evaluate('qaHeld.forEach(run=>run())')
