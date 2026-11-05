@@ -225,6 +225,18 @@ Präsentationen, Bilder, Notizen und Screenshots aus echten Projekten gehören n
 in dieses Repository; die Tests verwenden synthetische Fixtures. Fachliche Inhalte,
 Recherche und Beratungsprozess liegen außerhalb dieses Technikpakets.
 
+## Mitmachen
+
+Änderungen laufen über Pull Requests:
+
+1. Einen Branch anlegen: `git switch -c <thema>`.
+2. Ändern, committen und den Branch pushen: `git push -u origin <thema>`.
+3. Einen Pull Request öffnen (`gh pr create` oder auf GitHub).
+4. Die CI baut die Startdateien und führt alle Tests aus; gemergt wird erst bei Grün.
+
+Bei Änderungen in `src/` vor dem Commit `npm run build` ausführen und die
+erzeugten Dateien unter `skills/slidefactory/assets/` mit committen.
+
 ## Lizenz
 
 [Apache-2.0](LICENSE).
