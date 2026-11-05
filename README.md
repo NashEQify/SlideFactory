@@ -224,3 +224,7 @@ Werkzeuge nicht. Ein Build erzeugt neue Deck-/Revisionskennungen für die Starte
 Präsentationen, Bilder, Notizen und Screenshots aus echten Projekten gehören nicht
 in dieses Repository; die Tests verwenden synthetische Fixtures. Fachliche Inhalte,
 Recherche und Beratungsprozess liegen außerhalb dieses Technikpakets.
+
+## Lizenz
+
+[Apache-2.0](LICENSE).
