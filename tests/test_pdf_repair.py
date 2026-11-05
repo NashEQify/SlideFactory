@@ -8,6 +8,7 @@ import subprocess
 
 from PIL import Image, ImageDraw
 from playwright.sync_api import expect
+from test_editor_e2e import _click_closing
 from test_editor_e2e import ROOT, _json_script, _set_json_script, _download, browser_factory
 
 
@@ -217,8 +218,7 @@ def test_slow_projected_frame_progress_cancel_and_error(tmp_path, browser_factor
 
     popup = begin('cancel')
     page.wait_for_function('qaHeld.length===1')
-    # Cancel closes the popup; trigger it detached so the click itself cannot race the close.
-    popup.get_by_role('button', name='Abbrechen', exact=True).evaluate('button => setTimeout(() => button.click(), 0)')
+    _click_closing(popup.get_by_role('button', name='Abbrechen', exact=True))
     page.wait_for_function('qaLongTimers.size===0')
     assert popup.is_closed()
     page.evaluate('qaHeld.forEach(run=>run())')
@@ -231,6 +231,7 @@ def test_slow_projected_frame_progress_cancel_and_error(tmp_path, browser_factor
     assert popup.locator('html').get_attribute('data-sf-print-ready') is None
     page.evaluate('qaHeld.forEach(run=>run())')
     assert page.evaluate('qaPrintCalls') == 1
-    popup.get_by_role('button', name='Schließen', exact=True).click()
+    with popup.expect_event('close'):
+        _click_closing(popup.get_by_role('button', name='Schließen', exact=True))
     assert page.locator('#sf-document').text_content() == before
     assert page.locator('[data-sf-runtime-preview]').count() == 0

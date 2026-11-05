@@ -254,6 +254,11 @@ def _drag(page, locator, dx, dy):
     page.mouse.up()
 
 
+def _click_closing(locator):
+    """Click a control that closes its own window, detached so the click cannot race the close."""
+    locator.evaluate("button => setTimeout(() => button.click(), 0)")
+
+
 def _download(page, destination, choice="Arbeitsstand mit Notizen"):
     page.get_by_role("button", name="HTML speichern", exact=True).click()
     with page.expect_download() as received:

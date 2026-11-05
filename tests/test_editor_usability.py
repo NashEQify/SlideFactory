@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 from playwright.sync_api import expect
-from test_editor_e2e import _presenter_action
+from test_editor_e2e import _click_closing, _presenter_action
 from test_editor_e2e import _ready, _edit, _meta, _slide_ids, _download, _cli, _set_json_script, browser_factory, ROOT
 
 
@@ -60,7 +60,8 @@ def test_rich_notes_all_consumers_and_real_handoff(tmp_path, browser_factory):
     page.wait_for_function("id=>JSON.parse(document.querySelector('#sf-document').textContent).notesFormat[id].html.includes('<ol>')",arg=first)
     expect(note.locator('ol')).to_have_count(1)
     field.press('Control+z'); page.wait_for_function("id=>!JSON.parse(document.querySelector('#sf-document').textContent).notesFormat[id].html.includes('<ol>')",arg=first)
-    popup.get_by_role('button',name='Referentenansicht schließen',exact=True).click()
+    with popup.expect_event('close'):
+        _click_closing(popup.get_by_role('button',name='Referentenansicht schließen',exact=True))
     saved=_download(page,tmp_path/'rich-saved.html'); _cli('validate',saved)
     _cli('set-text',saved,'--element','qa-text','--text','Next agent edit')
     fresh=browser_factory(saved); assert _meta(fresh)['notesFormat'][first]==pair
