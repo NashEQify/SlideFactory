@@ -8,7 +8,7 @@ Arbeitsstand und das Ergebnis.
 
 [![CI](https://github.com/NashEQify/SlideFactory/actions/workflows/ci.yml/badge.svg)](https://github.com/NashEQify/SlideFactory/actions/workflows/ci.yml)
 
-**Editor 1.7.1.** Was der eingebettete Editor kann:
+**Editor 1.8.0.** Was der eingebettete Editor kann:
 
 - **Bearbeiten im Browser:** Text, Textboxen, Bilder (einfügen, ersetzen, zuschneiden),
   sechs Formen, Farben, Schriftgrößen für Mehrfachauswahl, Formatpinsel,
@@ -57,7 +57,7 @@ zuschneiden oder über den Papierkorb löschen; der Rückgängig-Pfeil stellt si
 wieder her. `Entf` löscht ausgewählte Bilder, Textboxen, eingefügte Formen und Post-its,
 ebenfalls mit Rückgängig. Während der Texteingabe löscht `Entf` nur Text;
 `Esc` wechselt zurück zur Objektauswahl. `Kommentare` speichert Hinweise zur aktuellen Folie.
-Schriftfamilie und Punktgröße wählst du aus Dropdowns; die beiden A-Pfeil-Buttons
+Schriftfamilie und Punktgröße wählst du aus Dropdowns (eingebettete Design-Schriften stehen oben; neue Textfelder nehmen die Textschrift des Designs); die beiden A-Pfeil-Buttons
 ändern die Größe um jeweils 2 pt. Textfarbe, Füllung und Kante haben kleine
 Farbwähler. Die Pipette nutzt die native Browserfunktion, wenn diese verfügbar ist.
 Ganz links kopiert der Formatpinsel die Formatierung einmal auf ein angeklicktes

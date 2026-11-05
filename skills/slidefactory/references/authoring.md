@@ -188,6 +188,10 @@ saved HTML; without storage it lasts for the open presentation); × clears it. T
 throttled background main window does not stall the display. Without any
 duration the pace line is hidden.
 
+Editor 1.8.0 inserts new text boxes in the design's text font (`--sf-font-text`,
+set by Clean MBB; Arial otherwise) and lists the fonts a design embeds first in the
+font dropdown.
+
 Editor 1.7.0 splits HTML speichern into a working copy (with notes, the handoff)
 and a share copy without speaker notes, guidance and post-its for recipients.
 

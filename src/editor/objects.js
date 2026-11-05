@@ -55,7 +55,8 @@ function createObjects(doc, hooks) {
     const element = insert('Textfeld einfügen', () => {
       const text = frame('text', { x: 520, y: 350, w: 560, h: 160 });
       Object.assign(text.style, {
-        fontFamily: 'Arial, sans-serif',
+        // A design names its text font in --sf-font-text; without it new text stays Arial.
+        fontFamily: 'var(--sf-font-text, Arial, sans-serif)',
         fontSize: '32pt',
         lineHeight: '1.2',
         color: 'var(--sf-text)',
