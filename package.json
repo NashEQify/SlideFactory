@@ -5,12 +5,15 @@
   "description": "Offline HTML presentations with an embedded shared editor",
   "scripts": {
     "build": "node scripts/build-starter.mjs",
-    "test": "python3 -m pytest -q"
+    "test": "python3 -m pytest -q",
+    "format": "prettier --write \"src/**/*.{js,css}\" \"scripts/*.mjs\"",
+    "format:check": "prettier --check \"src/**/*.{js,css}\" \"scripts/*.mjs\""
   },
   "engines": {
     "node": ">=18"
   },
   "devDependencies": {
+    "prettier": "3.3.3",
     "terser": "^5.51.2"
   },
   "license": "Apache-2.0"

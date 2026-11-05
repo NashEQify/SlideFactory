@@ -18,6 +18,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: npm run format:check
 
       # The committed starters must be exactly what the build produces from src/
       # (deck and revision IDs are freshly generated on every build).

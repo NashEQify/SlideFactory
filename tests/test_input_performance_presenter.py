@@ -1,7 +1,7 @@
 """Metadata typing must stay local; presenter keyboard and close are real UI paths."""
 import pytest
 from playwright.sync_api import expect
-from test_editor_e2e import _presenter_action
+from test_editor_e2e import _click_closing, _presenter_action
 from test_editor_e2e import (
     _ready, _edit, _meta, _download, _cli, _slide_ids, browser_factory,
 )
@@ -106,7 +106,7 @@ def test_presenter_arrows_guard_native_select_and_visible_close(tmp_path, browse
     close = popup.get_by_role('button', name='Referentenansicht schließen', exact=True)
     expect(close).to_be_visible()
     with popup.expect_event('close'):
-        close.click()
+        _click_closing(close)
     assert not page.is_closed()
     with page.expect_popup() as reopened:
         _presenter_action(page)
@@ -170,9 +170,8 @@ def test_presenter_close_remains_available_after_owner_disconnect(tmp_path, brow
     expect(popup.locator('#connection')).to_contain_text('beendet')
     close = popup.get_by_role('button', name='Referentenansicht schließen', exact=True)
     expect(close).to_be_enabled()
-    # The popup closes during a native click; trigger it detached so the click itself cannot race the close.
     with popup.expect_event('close'):
-        close.evaluate('button => setTimeout(() => button.click(), 0)')
+        _click_closing(close)
 
 
 @pytest.mark.parametrize('kind', ['notes', 'guidance'])
