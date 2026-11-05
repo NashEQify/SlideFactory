@@ -1,4 +1,4 @@
-import { readFile, mkdir, writeFile } from 'node:fs/promises';
+import { readFile, readdir, mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
@@ -91,13 +91,29 @@ await writeFile(
   path.join(root, 'skills/slidefactory/assets/editor-releases.json'),
   json({ schemaVersion: 1, current: editorVersion, releases }) + '\n',
 );
-for (const design of ['consulting', 'editorial']) {
+const designs = { consulting: 'Consulting', editorial: 'Editorial', mbb: 'Clean MBB' };
+// Embedded fonts: a design's Family-Weight.woff2 files lead its CSS as data URLs, after compaction.
+const designFonts = { mbb: 'src/designs/mbb-fonts' };
+const fontFaces = async (folder) => {
+  const files = (await readdir(path.join(root, folder))).filter((name) => name.endsWith('.woff2'));
+  const faces = await Promise.all(
+    files.sort().map(async (name) => {
+      const [, family, weight] = name.match(/^(\w+)-(\d+)\.woff2$/);
+      const data = (await readFile(path.join(root, folder, name))).toString('base64');
+      return `@font-face{font-family:${family};font-style:normal;font-weight:${weight};font-display:block;src:url(data:font/woff2;base64,${data}) format('woff2')}`;
+    }),
+  );
+  const notice = (await read(`${folder}/OFL.txt`)).split('\n\n')[0].replace(/\n/g, '; ');
+  return `/* ${notice}. SIL Open Font License 1.1, https://openfontlicense.org */${faces.join('')}`;
+};
+for (const [design, designName] of Object.entries(designs)) {
   const [examples, readableCss, overviewSource] = await Promise.all([
     read(`src/templates/${design}.html`),
     read(`src/designs/${design}.css`),
     read(`src/designs/${design}-overview.html`),
   ]);
-  const css = compactCss(readableCss);
+  const fonts = designFonts[design] ? await fontFaces(designFonts[design]) : '';
+  const css = fonts + compactCss(readableCss);
   // Every starter opens with its design overview; deck.py new leaves it out of a new deck.
   const overview = withSizes(overviewSource, readableCss).trim();
   const deckOpen = '<main id="sf-deck" aria-label="Präsentation">\n';
@@ -108,7 +124,7 @@ for (const design of ['consulting', 'editorial']) {
     schemaVersion: 1,
     deckId: stableId('deck', design),
     revision: stableId('revision', design, css, editorCss, runtime, layout, schemesText),
-    title: `SlideFactory · ${design === 'consulting' ? 'Consulting' : 'Editorial'}`,
+    title: `SlideFactory · ${designName}`,
     templateId: design,
     templateVersion: '1.0.0',
     colorScheme: 'cyan-dark',
@@ -121,7 +137,7 @@ for (const design of ['consulting', 'editorial']) {
     .map(([key, value]) => `--sf-${key}:${value};`)
     .join('')}}`;
   const html = `<!DOCTYPE html>\n<html lang="de"><head><meta charset="utf-8"><meta name="author" content="git@griessing.com"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${metadata.title}</title>\n<style id="sf-theme-tokens">${theme}</style>\n<style id="sf-design">${css}</style>\n<style id="sf-editor-styles">${editorCss}</style>\n</head><body class="sf-design-${design}">\n${layout.replaceAll('{{SYNTHETIC_IMAGE}}', imageUrl)}\n<script id="sf-document" type="application/json">${json(metadata)}</script>\n<script id="sf-color-schemes" type="application/json">${json(schemes)}</script>\n<script id="sf-editor-manifest" type="application/json">${json(manifest)}</script>\n<script id="sf-runtime">${runtime}</script>\n</body></html>\n`;
-  const filename = design === 'consulting' ? 'consulting.html' : 'editorial.html';
+  const filename = `${design}.html`;
   await writeFile(path.join(root, 'skills/slidefactory/assets', filename), html);
   console.log(`Built ${filename} (${Buffer.byteLength(html)} bytes)`);
   const blankDeck = `${deckOpen}  ${overview}\n  <section class="sf-slide" data-sf-slide="intro" style="width:1600px;height:900px"></section>\n</main>`;
@@ -136,9 +152,9 @@ for (const design of ['consulting', 'editorial']) {
   const blank = html
     .replace(layout.replaceAll('{{SYNTHETIC_IMAGE}}', imageUrl), blankDeck)
     .replace(json(metadata), json(blankMeta));
-  const blankName = design === 'consulting' ? 'consulting-blank.html' : 'editorial-blank.html';
+  const blankName = `${design}-blank.html`;
   await writeFile(path.join(root, 'skills/slidefactory/assets', blankName), blank);
   console.log(
-    `Built ${blankName} (${Buffer.byteLength(blank)} bytes; design overview, no authored text/images/fonts)`,
+    `Built ${blankName} (${Buffer.byteLength(blank)} bytes; design overview, no authored text/images${fonts ? '' : '/fonts'})`,
   );
 }

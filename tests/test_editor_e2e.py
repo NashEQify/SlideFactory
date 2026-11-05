@@ -374,7 +374,7 @@ def _assert_crop(state):
 # TC-001 (A1, L4 positive) | INFRA: none
 @pytest.mark.e2e
 def test_offline_dependency(tmp_path, browser_factory):
-    for name in ("consulting.html", "editorial.html"):
+    for name in ("consulting.html", "editorial.html", "mbb.html"):
         path = _ready(tmp_path, name)
         page = browser_factory(path)
         ids = _slide_ids(page)
@@ -687,11 +687,12 @@ def test_source_collateral_change(tmp_path, browser_factory):
 # TC-008 (A8, L4 positive/negative) | INFRA: none
 @pytest.mark.e2e
 def test_layout_palette_coupling(tmp_path, browser_factory):
-    sources = [_require(PACKAGE / "assets" / name).read_text() for name in ("consulting.html", "editorial.html")]
+    sources = [_require(PACKAGE / "assets" / name).read_text() for name in ("consulting.html", "editorial.html", "mbb.html")]
     runtime = [[body for attrs, body in Scripts(source).entries if attrs.get("type") != "application/json"] for source in sources]
-    assert runtime[0] == runtime[1] and runtime[0]
+    assert runtime[0] == runtime[1] == runtime[2] and runtime[0]
     assert list(_slide_spans(sources[0]).values()) != list(_slide_spans(sources[1]).values())
-    for index, name in enumerate(("consulting.html", "editorial.html")):
+    assert list(_slide_spans(sources[0]).values()) != list(_slide_spans(sources[2]).values())
+    for index, name in enumerate(("consulting.html", "editorial.html", "mbb.html")):
         page = browser_factory(_ready(tmp_path, name))
         _edit(page)
         schemes = _json_script(sources[index], "sf-color-schemes")

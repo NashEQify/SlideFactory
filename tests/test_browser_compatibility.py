@@ -10,15 +10,19 @@ from test_editor_e2e import _presenter_action
 from test_editor_e2e import PACKAGE, _cli, _download, _edit, _meta, browser_factory
 
 
-@pytest.mark.parametrize('template', ['consulting-blank.html', 'editorial-blank.html'])
+# Budget intent: keep the entire reusable editor/template small before any
+# content is added; catch accidental embedded demo images/fonts or bundles.
+# Rich notes, print, structural history and checked release identity add ~30 KiB;
+# the 1.2-1.3 toolbar, shapes, notes pane and slide links bring it to ~180 KiB;
+# the three design overview slides add ~9 KiB. Clean MBB embeds its five Latin
+# WOFF2 subsets (~77 KiB, ~103 KiB as base64) and nothing else.
+BUDGET_KIB = {'consulting-blank.html': 208, 'editorial-blank.html': 208, 'mbb-blank.html': 312}
+
+
+@pytest.mark.parametrize('template', list(BUDGET_KIB))
 def test_empty_template_offline_file_handoff_and_presenter(tmp_path, browser_factory, template):
     source = PACKAGE / 'assets' / template
-    # Budget intent: keep the entire reusable editor/template small before any
-    # content is added; catch accidental embedded demo images/fonts or bundles.
-    # Rich notes, print, structural history and checked release identity add ~30 KiB;
-    # the 1.2-1.3 toolbar, shapes, notes pane and slide links bring it to ~180 KiB;
-    # the three design overview slides add ~9 KiB.
-    assert source.stat().st_size < 208 * 1024
+    assert source.stat().st_size < BUDGET_KIB[template] * 1024
     path = tmp_path / template
     path.write_bytes(source.read_bytes())
     page = browser_factory(path)
@@ -26,7 +30,8 @@ def test_empty_template_offline_file_handoff_and_presenter(tmp_path, browser_fac
     expect(page.locator('#sf-deck [data-sf-slide]:not([data-sf-overview])')).to_have_count(1)
     expect(page.locator('#sf-deck [data-sf-id],#sf-deck img')).to_have_count(0)
     assert page.locator('#sf-deck [data-sf-slide="intro"]').inner_text().strip() == ''
-    assert '@font-face' not in path.read_text()
+    faces = path.read_text().count('@font-face')
+    assert faces == (5 if template == 'mbb-blank.html' else 0)
     _edit(page)
     page.get_by_label('Farbschema', exact=True).select_option('indigo-light')
     page.get_by_role('button', name='Kommentare', exact=True).click()

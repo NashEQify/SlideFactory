@@ -8,7 +8,7 @@ from test_editor_e2e import (
 )
 
 
-@pytest.mark.parametrize('template', ['consulting.html', 'editorial.html'])
+@pytest.mark.parametrize('template', ['consulting.html', 'editorial.html', 'mbb.html'])
 def test_open_guidance_follows_navigation_and_file_handoff(tmp_path, browser_factory, template):
     path = _ready(tmp_path, template)
     source = path.read_text()

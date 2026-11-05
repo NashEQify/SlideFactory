@@ -31,17 +31,20 @@ zeigt nur den Quelltext):
 
 - [Consulting](skills/slidefactory/assets/consulting.html): klare Flächen und serifenlose Typografie.
 - [Editorial](skills/slidefactory/assets/editorial.html): eigener Aufbau mit Serifentypografie.
+- [Clean MBB](skills/slidefactory/assets/mbb.html): dunkler Beratungslook mit Aussagetiteln,
+  Schriften Zain und Inter eingebettet (SIL Open Font License).
 
-Ohne Beispielinhalte: [Consulting leer](skills/slidefactory/assets/consulting-blank.html)
-oder [Editorial leer](skills/slidefactory/assets/editorial-blank.html). Diese
-Dateien enthalten eine leere Folie, den Editor und die Farbschemata; keine
-Text-, Bild- oder Font-Assets. Sie lassen sich direkt offline öffnen.
+Ohne Beispielinhalte: [Consulting leer](skills/slidefactory/assets/consulting-blank.html),
+[Editorial leer](skills/slidefactory/assets/editorial-blank.html) oder
+[Clean MBB leer](skills/slidefactory/assets/mbb-blank.html). Diese Dateien
+enthalten eine leere Folie, den Editor und die Farbschemata; keine Text- oder
+Bild-Assets, Fonts nur bei Clean MBB. Sie lassen sich direkt offline öffnen.
 
 Jede Startdatei beginnt mit drei Übersichtsfolien zu ihrem Design: Schriftgrößen,
 Farbrollen, Komponenten und Regeln. Ein neues Deck aus `deck.py new` enthält sie
 nicht mehr. Die Quellen liegen unter `src/designs/*-overview.html`; die
 Schriftgrößen setzt der Build aus dem Design-CSS ein.
-Alle vier Basisdateien enthalten `git@griessing.com` als HTML-Author-Metadatum.
+Alle sechs Basisdateien enthalten `git@griessing.com` als HTML-Author-Metadatum.
 
 `Bearbeiten` öffnet die feste Werkzeugleiste. Text: direkt anklicken; Position:
 Textbox an ihrer Fläche ziehen oder Pfeiltasten nutzen; Größe: Griffe. Während

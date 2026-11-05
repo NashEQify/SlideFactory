@@ -43,7 +43,7 @@ def test_native_keyboard_save_and_cancelled_gesture(tmp_path, browser_factory):
     assert _frame(box)==committed, 'cancelled preview must never enter history'
 
 
-@pytest.mark.parametrize('template,element',[('consulting.html','intro-subtitle'),('editorial.html','intro-title')])
+@pytest.mark.parametrize('template,element',[('consulting.html','intro-subtitle'),('editorial.html','intro-title'),('mbb.html','intro-title')])
 def test_multiline_text_reparsed_in_same_frame(tmp_path,browser_factory,template,element):
     # Use the actual ready layout: the unrelated full-canvas geometry fixture
     # added by _ready would intercept a user's click on its original title.

@@ -18,17 +18,22 @@ as a folder; using it needs no project repository, server, Forge or global insta
 ## Start or continue
 
 For a new presentation, use the template file the user names in chat. If none is
-specified, start with `assets/consulting.html`; `assets/editorial.html` is a
-second, independent design. Both already contain the same working editor. Copy
+specified, start with `assets/consulting.html`. Three designs are equal peers:
+`assets/consulting.html` (Arial, flat surfaces), `assets/editorial.html` (serif,
+editorial layout) and `assets/mbb.html` (Clean MBB: dark consulting look, action
+titles, embedded Zain/Inter fonts). All contain the same working editor. Copy
 through `scripts/deck.py new` to give the new deck fresh identity. The starter's
 example slides are material to replace and extend, not the user's finished story.
-For an empty starting file, use `assets/consulting-blank.html` or
-`assets/editorial-blank.html`: one blank slide, the chosen design, palettes and
-the same embedded editor, without example content or image/font assets.
+For an empty starting file, use `assets/consulting-blank.html`,
+`assets/editorial-blank.html` or `assets/mbb-blank.html`: one blank slide, the
+chosen design, palettes and the same embedded editor, without example content or
+images; only Clean MBB embeds its fonts.
 Every starter opens with design overview slides (`data-sf-overview`) that show
 the person its type scale, colors, components and rules; `deck.py new` leaves
-them out of the new deck. Follow the starter's type scale and color roles.
-All four base files include `git@griessing.com` in the HTML author metadata.
+them out of the new deck. Follow the starter's type scale and color roles. In
+Clean MBB, reading text stays at 24 px or more and only markup (kicker, label,
+tag, chip, badge, footer, folio) goes down to 16 px; titles are whole sentences.
+All six base files include `git@griessing.com` in the HTML author metadata.
 
 For revisions, the user's **latest saved HTML** is the input. Read it before
 editing. Never recreate the presentation from a starter or overwrite direct
