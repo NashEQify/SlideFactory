@@ -21,7 +21,7 @@ embedded editor. These are roles, not files the human manually assembles.
 Implemented resource boundaries:
 
 - `skills/slidefactory/`: instructions, ready starter, authoring references and helpers.
-- `skills/slidefactory/assets/starter.html`: complete whole-deck starter including editor.
+- `skills/slidefactory/assets/consulting.html`: complete whole-deck starter including editor.
 - `src/editor/`: maintained shared editor source, embedded into the ready starter.
 
 The [package layout](package-layout.md) explains invocation from a new

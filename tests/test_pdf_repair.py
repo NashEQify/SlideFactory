@@ -16,7 +16,7 @@ EVIDENCE = Path(os.environ.get('SF_PDF_EVIDENCE', '/tmp/slidefactory-pdf-repair'
 
 
 def _fixture(tmp_path):
-    source = (ROOT / 'skills/slidefactory/assets/starter-editorial.html').read_text()
+    source = (ROOT / 'skills/slidefactory/assets/editorial.html').read_text()
     image = Image.new('RGB', (1200, 600)); draw = ImageDraw.Draw(image)
     for box, color in [((0, 0, 599, 299), '#ef3340'), ((600, 0, 1199, 299), '#20bd65'),
                        ((0, 300, 599, 599), '#2864dc'), ((600, 300, 1199, 599), '#ffd43b')]:

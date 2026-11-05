@@ -17,7 +17,7 @@ def _seconds(text, label):
 
 
 def _deck(tmp_path, intro='data-sf-duration="60"', approach='data-sf-duration="90"', outlook=''):
-    source = (PACKAGE / 'assets/starter.html').read_text()
+    source = (PACKAGE / 'assets/consulting.html').read_text()
     for slide, extra in (('intro', intro), ('approach', approach), ('outlook', outlook)):
         if extra:
             source = source.replace(f'data-sf-slide="{slide}"', f'data-sf-slide="{slide}" {extra}', 1)
@@ -159,7 +159,7 @@ def test_part_attributes_are_validated_and_inspected(tmp_path):
 
 
 def test_deck_without_durations_shows_only_slide_time(tmp_path, browser_factory):
-    page = browser_factory(PACKAGE / 'assets/starter.html')
+    page = browser_factory(PACKAGE / 'assets/consulting.html')
     popup = _presenter(page)
     expect(popup.locator('#slide-time')).to_have_text('Folie 00:00')
     expect(popup.locator('#target')).to_have_text('')

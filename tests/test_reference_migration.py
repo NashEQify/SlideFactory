@@ -19,7 +19,7 @@ import pytest
 ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = ROOT / 'skills/slidefactory/scripts/migrate_reference.py'
 DECK = ROOT / 'skills/slidefactory/scripts/deck.py'
-STARTER = ROOT / 'skills/slidefactory/assets/starter.html'
+STARTER = ROOT / 'skills/slidefactory/assets/consulting.html'
 from test_editor_e2e import CHROMIUM
 
 

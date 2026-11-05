@@ -871,7 +871,7 @@ def upgrade_editor(deck, source_path, destination):
     assets = Path(__file__).resolve().parents[1] / "assets"
     registry = json_value(read_source(assets / "editor-releases.json"), "trusted editor releases")
     css, runtime, manifest = editor_identity(deck, registry)
-    current = Deck(read_source(assets / "blank.html"))
+    current = Deck(read_source(assets / "consulting-blank.html"))
     next_css, next_runtime, next_manifest = editor_identity(current, registry)
     if next_manifest is None or current.json_node(next_manifest)["editorVersion"] != registry["current"]:
         raise DeckError("Packaged current editor release is inconsistent.")

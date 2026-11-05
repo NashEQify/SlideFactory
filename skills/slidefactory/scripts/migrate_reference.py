@@ -21,7 +21,7 @@ from deck import (Deck, DeckError, SourceParser, atomic_write, image_data, json_
 from reference_colors import recognize as recognize_colors, recolor_css, recolor_draw_script, semantic_color, SCHEMES
 
 HERE = Path(__file__).resolve().parent
-DEFAULT_TEMPLATE = HERE.parent / 'assets/starter.html'
+DEFAULT_TEMPLATE = HERE.parent / 'assets/consulting.html'
 
 
 def digest(source):

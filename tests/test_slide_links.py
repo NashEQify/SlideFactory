@@ -15,7 +15,7 @@ def _ids(page):
 
 
 def test_slide_link_lifecycle_and_return_jump(tmp_path, browser_factory):
-    page = browser_factory(PACKAGE / 'assets/starter.html')
+    page = browser_factory(PACKAGE / 'assets/consulting.html')
     ids = _ids(page)
     assert len(ids) >= 3
     origin, backup, other = ids[0], ids[-1], ids[1]
@@ -97,7 +97,7 @@ def test_slide_link_lifecycle_and_return_jump(tmp_path, browser_factory):
 
 
 def test_deleted_target_is_flagged_in_editor_and_by_validator(tmp_path, browser_factory):
-    page = browser_factory(PACKAGE / 'assets/starter.html')
+    page = browser_factory(PACKAGE / 'assets/consulting.html')
     ids = _ids(page)
     _edit(page)
     page.get_by_role('button', name='Folienlink einfügen', exact=True).click()

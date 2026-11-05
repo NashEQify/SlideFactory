@@ -49,7 +49,7 @@ def test_upgrade_actual_old_download_exact_preservation(tmp_path,browser_factory
 @pytest.mark.parametrize('damage',['css','runtime','mixed','forged','unknown','malformed-version','duplicate','destination','same-source'])
 def test_upgrade_rejects_untrusted_or_overwriting_input(tmp_path,damage):
     original=_legacy(tmp_path);source=original.read_text();output=tmp_path/'result.html'
-    current=(ROOT/'skills/slidefactory/assets/blank.html').read_text()
+    current=(ROOT/'skills/slidefactory/assets/consulting-blank.html').read_text()
     if damage=='css':source=source.replace(_node(source,'sf-editor-styles','style')[1],_node(source,'sf-editor-styles','style')[1]+' ',1)
     elif damage=='runtime':source=source.replace(_node(source,'sf-runtime','script')[1],_node(source,'sf-runtime','script')[1]+' ',1)
     elif damage=='mixed':source=source.replace(_node(source,'sf-runtime','script')[1],_node(current,'sf-runtime','script')[1],1)

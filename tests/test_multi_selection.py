@@ -11,7 +11,7 @@ from test_editor_e2e import (
 
 
 def _deck(tmp_path):
-    source = (PACKAGE / "assets/blank.html").read_text()
+    source = (PACKAGE / "assets/consulting-blank.html").read_text()
     content = """
     <div data-sf-id="outer" data-sf-kind="box" style="position:absolute;left:200px;top:200px;width:150px;height:80px;background:red">
       <div data-sf-id="inner" data-sf-kind="text" style="position:absolute;left:10px;top:10px;width:80px;height:40px">Nested</div>

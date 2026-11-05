@@ -36,7 +36,7 @@ from test_migration_runtime import _asset, _native, _presenter
 pytestmark = pytest.mark.e2e
 
 
-def _fixture(tmp_path, template="starter.html", *, slides=None):
+def _fixture(tmp_path, template="consulting.html", *, slides=None):
     """Clone authored template sections, renaming every stable and ordinary ID.
 
     Three source layouts include nested text, flow/inline geometry and an SVG
@@ -168,7 +168,7 @@ def _settled_frames(page):
 
 
 # TC-L01 (changed-scope cost, L3 public integration) | INFRA: none
-@pytest.mark.parametrize("template", ["starter.html", "starter-editorial.html"])
+@pytest.mark.parametrize("template", ["consulting.html", "editorial.html"])
 @pytest.mark.parametrize("slides", [40, 400])
 def test_authored_typing_cost_is_local_at_both_deck_sizes(tmp_path, browser_factory, template, slides):
     path, first, text_id, _, _ = _fixture(tmp_path, template, slides=slides)

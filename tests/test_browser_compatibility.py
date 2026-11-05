@@ -10,7 +10,7 @@ from test_editor_e2e import _presenter_action
 from test_editor_e2e import PACKAGE, _cli, _download, _edit, _meta, browser_factory
 
 
-@pytest.mark.parametrize('template', ['blank.html', 'blank-editorial.html'])
+@pytest.mark.parametrize('template', ['consulting-blank.html', 'editorial-blank.html'])
 def test_empty_template_offline_file_handoff_and_presenter(tmp_path, browser_factory, template):
     source = PACKAGE / 'assets' / template
     # Budget intent: keep the entire reusable editor/template small before any

@@ -105,7 +105,7 @@ for (const design of ['consulting', 'editorial']) {
     .map(([key, value]) => `--sf-${key}:${value};`)
     .join('')}}`;
   const html = `<!DOCTYPE html>\n<html lang="de"><head><meta charset="utf-8"><meta name="author" content="git@griessing.com"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${metadata.title}</title>\n<style id="sf-theme-tokens">${theme}</style>\n<style id="sf-design">${css}</style>\n<style id="sf-editor-styles">${editorCss}</style>\n</head><body class="sf-design-${design}">\n${layout.replaceAll('{{SYNTHETIC_IMAGE}}', imageUrl)}\n<script id="sf-document" type="application/json">${json(metadata)}</script>\n<script id="sf-color-schemes" type="application/json">${json(schemes)}</script>\n<script id="sf-editor-manifest" type="application/json">${json(manifest)}</script>\n<script id="sf-runtime">${runtime}</script>\n</body></html>\n`;
-  const filename = design === 'consulting' ? 'starter.html' : 'starter-editorial.html';
+  const filename = design === 'consulting' ? 'consulting.html' : 'editorial.html';
   await writeFile(path.join(root, 'skills/slidefactory/assets', filename), html);
   console.log(`Built ${filename} (${Buffer.byteLength(html)} bytes)`);
   const blankMeta = {
@@ -120,7 +120,7 @@ for (const design of ['consulting', 'editorial']) {
   const blank = html
     .replace(layout.replaceAll('{{SYNTHETIC_IMAGE}}', imageUrl), blankDeck)
     .replace(json(metadata), json(blankMeta));
-  const blankName = design === 'consulting' ? 'blank.html' : 'blank-editorial.html';
+  const blankName = design === 'consulting' ? 'consulting-blank.html' : 'editorial-blank.html';
   await writeFile(path.join(root, 'skills/slidefactory/assets', blankName), blank);
   console.log(
     `Built ${blankName} (${Buffer.byteLength(blank)} bytes; no authored text/images/fonts)`,

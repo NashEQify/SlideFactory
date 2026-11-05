@@ -19,7 +19,7 @@ def _style(node):
 
 
 def test_text_surface_intent_cancel_and_offline_handoff(tmp_path, browser_factory):
-    source = (PACKAGE / 'assets/blank.html').read_text()
+    source = (PACKAGE / 'assets/consulting-blank.html').read_text()
     content = '<div data-sf-id="drag-text" data-sf-kind="text" style="position:absolute;left:200px;top:160px;width:500px;height:90px;font:32px/1.3 Arial">Alpha Beta Gamma</div>'
     content += '<div style="position:absolute;left:200px;top:450px;transform:scale(.8);transform-origin:0 0"><div data-sf-id="flow-text" data-sf-kind="text" data-sf-layout="flow" style="width:500px;height:80px;font:32px Arial">Flow text</div></div>'
     path = tmp_path / 'text-intent.html'
@@ -84,7 +84,7 @@ def test_text_surface_intent_cancel_and_offline_handoff(tmp_path, browser_factor
 
 
 def test_editorial_shapes_and_preserved_intro_text(tmp_path, browser_factory):
-    path = tmp_path / 'editorial.html'; path.write_text((PACKAGE / 'assets/starter-editorial.html').read_text())
+    path = tmp_path / 'editorial.html'; path.write_text((PACKAGE / 'assets/editorial.html').read_text())
     page = browser_factory(path)
     evidence = Path(os.environ.get('SF_SHAPE_EVIDENCE', tmp_path)); evidence.mkdir(parents=True, exist_ok=True)
     # Capture the authored presentation before edits, with matching viewport/chrome.
