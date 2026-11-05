@@ -36,6 +36,11 @@ Ohne Beispielinhalte: [Consulting leer](skills/slidefactory/assets/consulting-bl
 oder [Editorial leer](skills/slidefactory/assets/editorial-blank.html). Diese
 Dateien enthalten eine leere Folie, den Editor und die Farbschemata; keine
 Text-, Bild- oder Font-Assets. Sie lassen sich direkt offline öffnen.
+
+Jede Startdatei beginnt mit drei Übersichtsfolien zu ihrem Design: Schriftgrößen,
+Farbrollen, Komponenten und Regeln. Ein neues Deck aus `deck.py new` enthält sie
+nicht mehr. Die Quellen liegen unter `src/designs/*-overview.html`; die
+Schriftgrößen setzt der Build aus dem Design-CSS ein.
 Alle vier Basisdateien enthalten `git@griessing.com` als HTML-Author-Metadatum.
 
 `Bearbeiten` öffnet die feste Werkzeugleiste. Text: direkt anklicken; Position:

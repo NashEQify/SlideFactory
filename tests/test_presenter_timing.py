@@ -3,6 +3,7 @@ import re
 
 import pytest
 from playwright.sync_api import expect
+from test_editor_e2e import _starter
 from test_editor_e2e import browser_factory, PACKAGE
 
 pytestmark = pytest.mark.e2e
@@ -17,7 +18,7 @@ def _seconds(text, label):
 
 
 def _deck(tmp_path, intro='data-sf-duration="60"', approach='data-sf-duration="90"', outlook=''):
-    source = (PACKAGE / 'assets/consulting.html').read_text()
+    source = _starter('consulting.html')
     for slide, extra in (('intro', intro), ('approach', approach), ('outlook', outlook)):
         if extra:
             source = source.replace(f'data-sf-slide="{slide}"', f'data-sf-slide="{slide}" {extra}', 1)

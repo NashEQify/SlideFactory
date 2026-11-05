@@ -911,6 +911,18 @@ def run(args):
         if len(titles) != 1:
             raise DeckError("Template needs exactly one document <title>.")
         edits.append((titles[0].open_end, titles[0].close_start, html.escape(args.title, quote=False)))
+        # A starter's design overview slides describe the template; the new deck leaves them out.
+        overview = [slide for slide in deck.slides.values() if "data-sf-overview" in slide.attrs]
+        if len(overview) == len(deck.slides):
+            raise DeckError("Template holds only design overview slides; it needs at least one deck slide.")
+        for slide in overview:
+            end = slide.end
+            while end < len(deck.source) and deck.source[end] in " \t\r\n":
+                end += 1
+            edits.append((slide.start, end, ""))
+            identity = slide.attrs["data-sf-slide"]
+            deck.meta["notes"].pop(identity, None)
+            deck.meta["guidance"].pop(identity, None)
     elif args.command == "set-text":
         node = deck.objects.get(args.element)
         if node is None or node.attrs["data-sf-kind"] != "text":

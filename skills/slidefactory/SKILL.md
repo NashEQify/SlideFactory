@@ -25,6 +25,9 @@ example slides are material to replace and extend, not the user's finished story
 For an empty starting file, use `assets/consulting-blank.html` or
 `assets/editorial-blank.html`: one blank slide, the chosen design, palettes and
 the same embedded editor, without example content or image/font assets.
+Every starter opens with design overview slides (`data-sf-overview`) that show
+the person its type scale, colors, components and rules; `deck.py new` leaves
+them out of the new deck. Follow the starter's type scale and color roles.
 All four base files include `git@griessing.com` in the HTML author metadata.
 
 For revisions, the user's **latest saved HTML** is the input. Read it before

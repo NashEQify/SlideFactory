@@ -162,8 +162,11 @@ accent combinations. Farbschema UI selects colors only; **no template UI picker*
 Templates are chosen by their file paths in chat.
 
 Ready assets: `consulting.html`, `editorial.html`, `consulting-blank.html` and
-`editorial-blank.html` in `skills/slidefactory/assets/`. Each blank file has one
-empty1600×900 slide, empty notes/guidance and no authored text/image/font assets.
+`editorial-blank.html` in `skills/slidefactory/assets/`. Each blank file has the
+design overview slides plus one empty 1600×900 slide, empty notes/guidance and no
+authored image/font assets. Every starter opens with `data-sf-overview` slides
+(type scale, colors, components, rules) from `src/designs/*-overview.html`;
+`deck.py new` drops them.
 Sources: src/editor/, src/designs/, src/templates/. Builder embeds the same eight
 classic JS modules, editor CSS, selected design and schemes. Terser is build-only;
 without it a warning accompanies readable larger output. Minification must retain

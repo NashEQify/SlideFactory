@@ -4,6 +4,7 @@ import base64
 from PIL import Image
 import pytest
 from playwright.sync_api import expect
+from test_editor_e2e import _starter
 from test_editor_e2e import (browser_factory, _ready, _edit, _box, _frame, _drag,
                             _download, _meta, _cli, PACKAGE)
 
@@ -47,7 +48,7 @@ def test_multiline_text_reparsed_in_same_frame(tmp_path,browser_factory,template
     # Use the actual ready layout: the unrelated full-canvas geometry fixture
     # added by _ready would intercept a user's click on its original title.
     source=tmp_path/template
-    source.write_bytes((PACKAGE/'assets'/template).read_bytes())
+    source.write_text(_starter(template))
     page=browser_factory(source)
     _edit(page)
     target=page.locator(f'#sf-deck [data-sf-id="{element}"]')
@@ -198,7 +199,7 @@ def test_import_keeps_original_slide_and_oriented_jpeg_handoff(tmp_path,browser_
 
 @pytest.mark.parametrize('followup',['alignment','notes'])
 def test_rapid_text_followup_keeps_separate_undo_transactions(tmp_path,browser_factory,followup):
-    source=tmp_path/'rapid-text.html';source.write_bytes((PACKAGE/'assets'/'consulting.html').read_bytes())
+    source=tmp_path/'rapid-text.html';source.write_text(_starter('consulting.html'))
     page=browser_factory(source);_edit(page)
     target=page.locator('#sf-deck [data-sf-id="intro-subtitle"]')
     original_text=target.text_content();original_align=target.evaluate('n=>n.style.textAlign')
@@ -227,7 +228,7 @@ def test_rapid_text_followup_keeps_separate_undo_transactions(tmp_path,browser_f
 
 
 def test_already_open_notes_finalize_pending_text_before_metadata(tmp_path,browser_factory):
-    source=tmp_path/'open-panel.html';source.write_bytes((PACKAGE/'assets'/'consulting.html').read_bytes())
+    source=tmp_path/'open-panel.html';source.write_text(_starter('consulting.html'))
     page=browser_factory(source);_edit(page)
     page.get_by_role('button',name='Referentennotizen',exact=True).click()
     target=page.locator('#sf-deck [data-sf-id="intro-subtitle"]');original=target.text_content()
@@ -244,7 +245,7 @@ def test_already_open_notes_finalize_pending_text_before_metadata(tmp_path,brows
 
 @pytest.mark.parametrize('defect',['zero-frame','negative-frame','relative-frame','nan-original','multiple-originals','missing-left','relative-top'])
 def test_malformed_authored_image_fails_before_browser_mutation(tmp_path,browser_factory,defect):
-    source=(PACKAGE/'assets'/'consulting.html').read_text()
+    source=_starter('consulting.html')
     import re
     match=re.search(r'<div data-sf-id="outlook-image".*?</div>',source,re.S)
     assert match
