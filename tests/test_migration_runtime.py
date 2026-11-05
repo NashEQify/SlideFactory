@@ -19,6 +19,7 @@ from PIL import Image
 import pytest
 from playwright.sync_api import expect
 
+from test_editor_e2e import _starter
 from test_editor_e2e import _presenter_action
 from test_editor_e2e import (
     Elements, PACKAGE, _cli, _download, _draft_flushed, _drag, _edit, _frame,
@@ -43,7 +44,7 @@ def _asset(size=(32, 32), *, large=False):
 
 
 def _native(tmp_path, name="consulting.html", *, large=False, metadata=None):
-    source = (PACKAGE / "assets" / name).read_text(encoding="utf-8")
+    source = _starter(name)
     slides = _slide_spans(source)
     first = next(iter(slides))
     document = _json_script(source)

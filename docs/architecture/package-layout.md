@@ -10,15 +10,15 @@ SlideFactory/
   skills/slidefactory/
     SKILL.md
     agents/openai.yaml
-    assets/consulting.html            complete consulting deck INCLUDING editor
-    assets/editorial.html  independent editorial design, same editor
-    assets/consulting-blank.html              empty consulting design, same editor
-    assets/editorial-blank.html    empty editorial design, same editor
+    assets/consulting.html         design overview + consulting examples, editor
+    assets/editorial.html          design overview + editorial examples, editor
+    assets/consulting-blank.html   design overview + one empty consulting slide
+    assets/editorial-blank.html    design overview + one empty editorial slide
     assets/editor-releases.json    trusted helper-side resource fingerprints
     references/                   HTML contract, focused operations, checks
     scripts/deck.py                stdlib-only checked file helper
   src/editor/                     shared document/interaction/image/UI source
-  src/designs/                    independent styles and four token palettes
+  src/designs/                    independent styles, overview slides, four palettes
   src/templates/                  neutral whole-deck layout examples
   scripts/build-starter.mjs        one-file assembly; optional build-only minifier
   tests/                          real browser/download + source-edit checks

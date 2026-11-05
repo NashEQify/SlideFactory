@@ -27,6 +27,15 @@ const stableId = (...parts) => {
   const variant = ((parseInt(hex[16], 16) & 3) | 8).toString(16);
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-${variant}${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
 };
+// Overview slides state each type role's size from the design CSS itself, so they cannot drift.
+const fontSize = (css, role) => {
+  const rule = css.match(new RegExp(`\\.sf-slide \\.${role} \\{([^}]*)\\}`));
+  const size = rule?.[1].match(/font(?:-size)?:[^;]*?(\d+)px/);
+  if (!size) throw Error(`No font size for .${role} in the design CSS.`);
+  return size[1];
+};
+const withSizes = (overview, css) =>
+  overview.replace(/\{\{size:([\w-]+)\}\}/g, (_, role) => fontSize(css, role));
 const compactCss = (css) =>
   css.replace(/\n\s*/g, '').replace(/ \{/g, '{').replace(/: /g, ':').trim();
 const [runtimeParts, editorCss, schemesText, image] = await Promise.all([
@@ -83,10 +92,17 @@ await writeFile(
   json({ schemaVersion: 1, current: editorVersion, releases }) + '\n',
 );
 for (const design of ['consulting', 'editorial']) {
-  const [layout, css] = await Promise.all([
+  const [examples, readableCss, overviewSource] = await Promise.all([
     read(`src/templates/${design}.html`),
-    read(`src/designs/${design}.css`).then(compactCss),
+    read(`src/designs/${design}.css`),
+    read(`src/designs/${design}-overview.html`),
   ]);
+  const css = compactCss(readableCss);
+  // Every starter opens with its design overview; deck.py new leaves it out of a new deck.
+  const overview = withSizes(overviewSource, readableCss).trim();
+  const deckOpen = '<main id="sf-deck" aria-label="Präsentation">\n';
+  if (!examples.startsWith(deckOpen)) throw Error(`${design}.html must open with ${deckOpen}`);
+  const layout = `${deckOpen}  ${overview}\n${examples.slice(deckOpen.length)}`;
   const slideIds = [...layout.matchAll(/data-sf-slide="([^"]+)"/g)].map((match) => match[1]);
   const metadata = {
     schemaVersion: 1,
@@ -108,21 +124,21 @@ for (const design of ['consulting', 'editorial']) {
   const filename = design === 'consulting' ? 'consulting.html' : 'editorial.html';
   await writeFile(path.join(root, 'skills/slidefactory/assets', filename), html);
   console.log(`Built ${filename} (${Buffer.byteLength(html)} bytes)`);
+  const blankDeck = `${deckOpen}  ${overview}\n  <section class="sf-slide" data-sf-slide="intro" style="width:1600px;height:900px"></section>\n</main>`;
+  const blankIds = [...blankDeck.matchAll(/data-sf-slide="([^"]+)"/g)].map((match) => match[1]);
   const blankMeta = {
     ...metadata,
     deckId: stableId('deck', design, 'blank'),
-    revision: stableId('revision', design, 'blank', css, editorCss, runtime, schemesText),
-    notes: { intro: '' },
-    guidance: { intro: { text: '', status: 'open' } },
+    revision: stableId('revision', design, 'blank', css, editorCss, runtime, schemesText, overview),
+    notes: Object.fromEntries(blankIds.map((id) => [id, ''])),
+    guidance: Object.fromEntries(blankIds.map((id) => [id, { text: '', status: 'open' }])),
   };
-  const blankDeck =
-    '<main id="sf-deck"><section class="sf-slide" data-sf-slide="intro" style="width:1600px;height:900px"></section></main>';
   const blank = html
     .replace(layout.replaceAll('{{SYNTHETIC_IMAGE}}', imageUrl), blankDeck)
     .replace(json(metadata), json(blankMeta));
   const blankName = design === 'consulting' ? 'consulting-blank.html' : 'editorial-blank.html';
   await writeFile(path.join(root, 'skills/slidefactory/assets', blankName), blank);
   console.log(
-    `Built ${blankName} (${Buffer.byteLength(blank)} bytes; no authored text/images/fonts)`,
+    `Built ${blankName} (${Buffer.byteLength(blank)} bytes; design overview, no authored text/images/fonts)`,
   );
 }

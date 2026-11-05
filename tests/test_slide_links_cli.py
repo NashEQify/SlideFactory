@@ -8,11 +8,12 @@ import sys
 import pytest
 
 
+from test_editor_e2e import _starter
+
 pytestmark = pytest.mark.integration
 
 ROOT = Path(__file__).resolve().parents[1]
 CLI = ROOT / "skills/slidefactory/scripts/deck.py"
-BLANK = ROOT / "skills/slidefactory/assets/consulting-blank.html"
 
 
 def cli(*args):
@@ -21,7 +22,7 @@ def cli(*args):
 
 def deck_with(tmp_path, slides):
     """Blank deck whose single slide is replaced by the given section fragments."""
-    source = BLANK.read_text(encoding="utf-8")
+    source = _starter("consulting-blank.html")
     blank_slide = '<section class="sf-slide" data-sf-slide="intro" style="width:1600px;height:900px"></section>'
     assert source.count(blank_slide) == 1
     source = source.replace(blank_slide, "\n".join(slides))

@@ -110,8 +110,20 @@ def _require(path):
     return path
 
 
-def _ready(tmp_path, name="consulting.html", filename=None):
+def _starter(name):
+    """A starter as a new deck receives it: without its design overview slides."""
     source = _require(PACKAGE / "assets" / name).read_text(encoding="utf-8")
+    overview = re.findall(r'<section class="sf-slide" data-sf-slide="([^"]+)" data-sf-overview', source)
+    source = re.sub(r'<section class="sf-slide" data-sf-slide="[^"]+" data-sf-overview.*?</section>\s*', "", source, flags=re.S)
+    meta = _json_script(source)
+    for identity in overview:
+        meta["notes"].pop(identity)
+        meta["guidance"].pop(identity)
+    return _set_json_script(source, meta)
+
+
+def _ready(tmp_path, name="consulting.html", filename=None):
+    source = _starter(name)
     slides = _slide_spans(source)
     assert len(slides) >= 2, "ready file needs at least two navigable slides"
     first_id = next(iter(slides))
