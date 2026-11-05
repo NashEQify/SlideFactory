@@ -26,7 +26,8 @@ Arbeitsstand und das Ergebnis.
 
 ## Sofort ausprobieren
 
-Öffne eine vollständige Startdatei im Browser:
+Öffne eine vollständige Startdatei aus deinem Klon direkt im Browser (GitHub selbst
+zeigt nur den Quelltext):
 
 - [Consulting](skills/slidefactory/assets/starter.html): klare Flächen und serifenlose Typografie.
 - [Editorial](skills/slidefactory/assets/starter-editorial.html): eigener Aufbau mit Serifentypografie.
@@ -142,17 +143,18 @@ Arbeitsstand; der Hinweis auf ungespeicherte Änderungen bleibt stehen.
 
 ## Neue Präsentation im eigenen Arbeitsordner
 
-Der Skill liegt in [`skills/slidefactory`](skills/slidefactory). Für Agenten, die
-Skills aus `~/.agents/skills` laden, genügt ein Link auf diesen Ordner:
+Der Skill liegt in [`skills/slidefactory`](skills/slidefactory). Verknüpfe den Ordner
+dort, wo dein Agent Skills sucht; die Befehle laufen im Wurzelordner deines Klons.
+Für Codex und andere Agenten, die `~/.agents/skills` lesen:
 
 ```bash
-ln -s "$PWD/skills/slidefactory" ~/.agents/skills/slidefactory
+mkdir -p ~/.agents/skills && ln -s "$PWD/skills/slidefactory" ~/.agents/skills/slidefactory
 ```
 
-Für Claude Code verknüpfst du denselben Ordner unter `~/.claude/skills`:
+Für Claude Code:
 
 ```bash
-ln -s "$PWD/skills/slidefactory" ~/.claude/skills/slidefactory
+mkdir -p ~/.claude/skills && ln -s "$PWD/skills/slidefactory" ~/.claude/skills/slidefactory
 ```
 
 Danach verwendest du ihn im Chat als `$slidefactory` (Codex) bzw. `/slidefactory`
@@ -215,7 +217,8 @@ lesbare Dateien. Die Entwicklungstests benötigen pytest, Pillow und Playwright;
 `SF_BROWSER=firefox` beziehungsweise `SF_BROWSER=webkit` wählt weitere
 Testbrowser. Standard ist Chromium, dessen Pfad sich mit
 `SF_CHROMIUM_EXECUTABLE` setzen lässt. Die fertigen Präsentationen brauchen diese
-Werkzeuge nicht. Ein Build erzeugt neue Deck-/Revisionskennungen für die Starter.
+Werkzeuge nicht. Der Build ist reproduzierbar: Ohne Änderung in `src/` erzeugt er
+exakt die eingecheckten Startdateien.
 
 ## Architektur und Entscheidungen
 

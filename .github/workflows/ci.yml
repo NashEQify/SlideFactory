@@ -20,12 +20,11 @@ jobs:
       - run: npm ci
       - run: npm run format:check
 
-      # The committed starters must be exactly what the build produces from src/
-      # (deck and revision IDs are freshly generated on every build).
+      # The committed starters must be exactly what the build produces from src/.
       - name: Build starters and check they are committed
         run: |
           npm run build
-          git diff --exit-code --stat -I '^  "(deckId|revision)": "[0-9a-f-]+",?$' -- skills/slidefactory/assets
+          git diff --exit-code --stat -- skills/slidefactory/assets
 
       - uses: actions/setup-python@v5
         with:

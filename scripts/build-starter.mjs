@@ -1,7 +1,7 @@
 import { readFile, mkdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
-import { randomUUID, createHash } from 'node:crypto';
+import { createHash } from 'node:crypto';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const read = (name) => readFile(path.join(root, name), 'utf8');
@@ -21,6 +21,12 @@ const modules = [
 ];
 // Sources are formatted for reading; embedded CSS drops the formatting whitespace again.
 // Safe while the stylesheets hold no quoted strings or url() values.
+// Starter identities derive from their inputs, so an unchanged build reproduces identical files.
+const stableId = (...parts) => {
+  const hex = createHash('sha256').update(parts.join('\0')).digest('hex');
+  const variant = ((parseInt(hex[16], 16) & 3) | 8).toString(16);
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-4${hex.slice(13, 16)}-${variant}${hex.slice(17, 20)}-${hex.slice(20, 32)}`;
+};
 const compactCss = (css) =>
   css.replace(/\n\s*/g, '').replace(/ \{/g, '{').replace(/: /g, ':').trim();
 const [runtimeParts, editorCss, schemesText, image] = await Promise.all([
@@ -84,8 +90,8 @@ for (const design of ['consulting', 'editorial']) {
   const slideIds = [...layout.matchAll(/data-sf-slide="([^"]+)"/g)].map((match) => match[1]);
   const metadata = {
     schemaVersion: 1,
-    deckId: randomUUID(),
-    revision: randomUUID(),
+    deckId: stableId('deck', design),
+    revision: stableId('revision', design, css, editorCss, runtime, layout, schemesText),
     title: `SlideFactory · ${design === 'consulting' ? 'Consulting' : 'Editorial'}`,
     templateId: design,
     templateVersion: '1.0.0',
@@ -104,8 +110,8 @@ for (const design of ['consulting', 'editorial']) {
   console.log(`Built ${filename} (${Buffer.byteLength(html)} bytes)`);
   const blankMeta = {
     ...metadata,
-    deckId: randomUUID(),
-    revision: randomUUID(),
+    deckId: stableId('deck', design, 'blank'),
+    revision: stableId('revision', design, 'blank', css, editorCss, runtime, schemesText),
     notes: { intro: '' },
     guidance: { intro: { text: '', status: 'open' } },
   };
