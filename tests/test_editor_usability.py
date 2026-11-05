@@ -233,6 +233,8 @@ def test_sidebar_pointer_keyboard_overflow_and_resize_handles(tmp_path,browser_f
     box=separator.bounding_box();page.mouse.move(box['x']+4,box['y']+20);page.mouse.down();page.mouse.move(box['x']+70,box['y']+20);separator.press('Escape');page.mouse.up();expect(separator).to_have_attribute('aria-valuenow','200')
     for width in [480,768,1280]:
         page.set_viewport_size({'width':width,'height':900})
+        # The compact layout collapses the sidebar in the resize handler; let it run first.
+        page.evaluate('()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))')
         if page.locator('.sf-thumbnails').is_hidden():page.get_by_role('button',name='Folienübersicht',exact=True).click()
         separator.focus();separator.press('End')
         assert page.locator('.sf-thumbnails').evaluate('node=>node.scrollWidth<=node.clientWidth')

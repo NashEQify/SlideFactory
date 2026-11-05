@@ -170,8 +170,9 @@ def test_presenter_close_remains_available_after_owner_disconnect(tmp_path, brow
     expect(popup.locator('#connection')).to_contain_text('beendet')
     close = popup.get_by_role('button', name='Referentenansicht schließen', exact=True)
     expect(close).to_be_enabled()
+    # The popup closes during a native click; trigger it detached so the click itself cannot race the close.
     with popup.expect_event('close'):
-        close.click()
+        close.evaluate('button => setTimeout(() => button.click(), 0)')
 
 
 @pytest.mark.parametrize('kind', ['notes', 'guidance'])
