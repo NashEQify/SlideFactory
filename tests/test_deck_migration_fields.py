@@ -6,7 +6,7 @@ import sys
 
 ROOT=Path(__file__).resolve().parents[1]
 HELPER=ROOT/'skills/slidefactory/scripts/deck.py'
-STARTER=ROOT/'skills/slidefactory/assets/starter.html'
+STARTER=ROOT/'skills/slidefactory/assets/consulting.html'
 
 
 def run(path,command='validate'):

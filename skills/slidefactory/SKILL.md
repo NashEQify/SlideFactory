@@ -18,12 +18,12 @@ as a folder; using it needs no project repository, server, Forge or global insta
 ## Start or continue
 
 For a new presentation, use the template file the user names in chat. If none is
-specified, start with `assets/starter.html`; `assets/starter-editorial.html` is a
+specified, start with `assets/consulting.html`; `assets/editorial.html` is a
 second, independent design. Both already contain the same working editor. Copy
 through `scripts/deck.py new` to give the new deck fresh identity. The starter's
 example slides are material to replace and extend, not the user's finished story.
-For an empty starting file, use `assets/blank.html` or
-`assets/blank-editorial.html`: one blank slide, the chosen design, palettes and
+For an empty starting file, use `assets/consulting-blank.html` or
+`assets/editorial-blank.html`: one blank slide, the chosen design, palettes and
 the same embedded editor, without example content or image/font assets.
 All four base files include `git@griessing.com` in the HTML author metadata.
 
@@ -90,7 +90,7 @@ when the user asks to generalize an observed improvement.
 Use `scripts/deck.py upgrade-editor LATEST.html --output UPDATED.html` to update
 only the checked common editor in an existing saved file. The source is retained;
 choose a new output path. The package must include `assets/editor-releases.json`
-and `assets/blank.html`. Known fingerprints establish compatibility, including
+and `assets/consulting-blank.html`. Known fingerprints establish compatibility, including
 the original unmanifested editor. Modified, mixed, unknown or newer resources
 are refused. Keep that deck's custom resources rather than rebuilding its slides.
 

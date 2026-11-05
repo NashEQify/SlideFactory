@@ -12,7 +12,7 @@ pytestmark = pytest.mark.e2e
 
 
 def _fixture(tmp_path, *, diagram=False):
-    source = (PACKAGE / "assets" / "starter.html").read_text()
+    source = (PACKAGE / "assets" / "consulting.html").read_text()
     spans = _slide_spans(source)
     ids = list(spans)
     metadata = _json_script(source)

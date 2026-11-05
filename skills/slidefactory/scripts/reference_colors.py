@@ -345,7 +345,7 @@ def main():
     parser.add_argument("file")
     parser.add_argument("--output",required=True)
     parser.add_argument("--scheme",default="cyan-dark")
-    parser.add_argument("--schemes-template",default=str(Path(__file__).resolve().parents[1]/"assets"/"starter.html"))
+    parser.add_argument("--schemes-template",default=str(Path(__file__).resolve().parents[1]/"assets"/"consulting.html"))
     args = parser.parse_args()
     try:
         print(json.dumps(adapt(args.file,args.output,args.schemes_template,args.scheme),indent=2))

@@ -6,7 +6,7 @@ from test_editor_e2e import _ready, _edit, _download, _cli, browser_factory
 # Size applies to the text range (inline spans); measure the first rendered text.
 TEXT_SIZE="n=>{const w=document.createTreeWalker(n,NodeFilter.SHOW_TEXT);while(w.nextNode())if(w.currentNode.textContent.trim())return getComputedStyle(w.currentNode.parentElement).fontSize;return getComputedStyle(n).fontSize}"
 
-@pytest.mark.parametrize('template',['starter.html','starter-editorial.html'])
+@pytest.mark.parametrize('template',['consulting.html','editorial.html'])
 def test_font_size_entry_buttons_history_and_handoff(tmp_path,browser_factory,template):
     path=_ready(tmp_path,template)
     source=path.read_text().replace('>Fixture alpha beta</p>','>Fixture <em>alpha</em> beta</p>')

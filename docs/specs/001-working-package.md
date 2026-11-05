@@ -161,8 +161,8 @@ one peer, not special-cased in runtime. Each supports at least dark/light and tw
 accent combinations. Farbschema UI selects colors only; **no template UI picker**.
 Templates are chosen by their file paths in chat.
 
-Ready assets: `starter.html`, `starter-editorial.html`, `blank.html` and
-`blank-editorial.html` in `skills/slidefactory/assets/`. Each blank file has one
+Ready assets: `consulting.html`, `editorial.html`, `consulting-blank.html` and
+`editorial-blank.html` in `skills/slidefactory/assets/`. Each blank file has one
 empty1600×900 slide, empty notes/guidance and no authored text/image/font assets.
 Sources: src/editor/, src/designs/, src/templates/. Builder embeds the same eight
 classic JS modules, editor CSS, selected design and schemes. Terser is build-only;

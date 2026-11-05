@@ -42,7 +42,7 @@ def _asset(size=(32, 32), *, large=False):
     return "data:image/png;base64," + base64.b64encode(payload).decode(), payload
 
 
-def _native(tmp_path, name="starter.html", *, large=False, metadata=None):
+def _native(tmp_path, name="consulting.html", *, large=False, metadata=None):
     source = (PACKAGE / "assets" / name).read_text(encoding="utf-8")
     slides = _slide_spans(source)
     first = next(iter(slides))
@@ -543,7 +543,7 @@ def test_rich_note_baseline_guard(tmp_path, browser_factory):
 
 
 # TC-R10 (M3/M8, L4 positive) | INFRA: none
-@pytest.mark.parametrize("template", ["starter.html", "starter-editorial.html"])
+@pytest.mark.parametrize("template", ["consulting.html", "editorial.html"])
 def test_complete_file_handoff(tmp_path, browser_factory, template):
     path, first, data_url, original = _native(tmp_path, template)
     page = browser_factory(path)

@@ -29,11 +29,11 @@ Arbeitsstand und das Ergebnis.
 Öffne eine vollständige Startdatei aus deinem Klon direkt im Browser (GitHub selbst
 zeigt nur den Quelltext):
 
-- [Consulting](skills/slidefactory/assets/starter.html): klare Flächen und serifenlose Typografie.
-- [Editorial](skills/slidefactory/assets/starter-editorial.html): eigener Aufbau mit Serifentypografie.
+- [Consulting](skills/slidefactory/assets/consulting.html): klare Flächen und serifenlose Typografie.
+- [Editorial](skills/slidefactory/assets/editorial.html): eigener Aufbau mit Serifentypografie.
 
-Ohne Beispielinhalte: [Consulting leer](skills/slidefactory/assets/blank.html)
-oder [Editorial leer](skills/slidefactory/assets/blank-editorial.html). Diese
+Ohne Beispielinhalte: [Consulting leer](skills/slidefactory/assets/consulting-blank.html)
+oder [Editorial leer](skills/slidefactory/assets/editorial-blank.html). Diese
 Dateien enthalten eine leere Folie, den Editor und die Farbschemata; keine
 Text-, Bild- oder Font-Assets. Sie lassen sich direkt offline öffnen.
 Alle vier Basisdateien enthalten `git@griessing.com` als HTML-Author-Metadatum.
@@ -163,7 +163,7 @@ Danach verwendest du ihn im Chat als `$slidefactory` (Codex) bzw. `/slidefactory
 Starte dort einen Chat und schreibe beispielsweise:
 
 > Lies `<repo>/skills/slidefactory/SKILL.md`.
-> Nutze `<repo>/skills/slidefactory/assets/starter.html`
+> Nutze `<repo>/skills/slidefactory/assets/consulting.html`
 > als Vorlage. Erstelle hier `presentation.html` für [Ziel, Publikum, Inhalte].
 
 Der [Skill](skills/slidefactory/SKILL.md) enthält Methode, vollständige Vorlagen,
@@ -175,7 +175,7 @@ Weiterarbeit gibst du die neueste gespeicherte HTML an, statt erneut zu starten.
 Optional direkt aus der Shell (Python 3, keine Zusatzpakete):
 
 ```bash
-python3 <repo>/skills/slidefactory/scripts/deck.py new --template <repo>/skills/slidefactory/assets/starter.html --output /dein/arbeitsordner/presentation.html --title 'Meine Präsentation'
+python3 <repo>/skills/slidefactory/scripts/deck.py new --template <repo>/skills/slidefactory/assets/consulting.html --output /dein/arbeitsordner/presentation.html --title 'Meine Präsentation'
 python3 <repo>/skills/slidefactory/scripts/deck.py inspect /dein/arbeitsordner/presentation.html --slide intro
 ```
 

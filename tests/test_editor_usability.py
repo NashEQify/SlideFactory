@@ -86,7 +86,7 @@ def _print(page, notes=False):
     return popup
 
 
-@pytest.mark.parametrize('design,scheme', [('starter.html','cyan-dark'),('starter-editorial.html','cyan-light')])
+@pytest.mark.parametrize('design,scheme', [('consulting.html','cyan-dark'),('editorial.html','cyan-light')])
 def test_actual_pdf_complete_slides_and_flowing_notes(tmp_path,browser_factory,design,scheme):
     import subprocess
     path=_ready(tmp_path,name=design);source=path.read_text();meta=json.loads(_cli('inspect',path).stdout)['metadata'];first=list(meta['notes'])[0]

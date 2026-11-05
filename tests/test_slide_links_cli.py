@@ -12,7 +12,7 @@ pytestmark = pytest.mark.integration
 
 ROOT = Path(__file__).resolve().parents[1]
 CLI = ROOT / "skills/slidefactory/scripts/deck.py"
-BLANK = ROOT / "skills/slidefactory/assets/blank.html"
+BLANK = ROOT / "skills/slidefactory/assets/consulting-blank.html"
 
 
 def cli(*args):

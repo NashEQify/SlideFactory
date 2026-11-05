@@ -16,7 +16,7 @@ from test_editor_e2e import (
 
 def test_group_font_size_is_available(tmp_path, browser_factory):
     path = tmp_path / "editorial.html"
-    path.write_text((PACKAGE / "assets/starter-editorial.html").read_text())
+    path.write_text((PACKAGE / "assets/editorial.html").read_text())
     page = browser_factory(path)
     _edit(page)
     for key in ["intro-title", "intro-subtitle"]:
@@ -28,7 +28,7 @@ def test_group_font_size_is_available(tmp_path, browser_factory):
 
 
 def _mixed_deck(tmp_path):
-    source = (PACKAGE / "assets/blank.html").read_text()
+    source = (PACKAGE / "assets/consulting-blank.html").read_text()
     content = """
     <p data-sf-id="words" data-sf-kind="text" style="position:absolute;left:100px;top:130px;width:350px;height:90px;font-size:18pt">Alpha <em style="font-size:24pt">Beta</em></p>
     <div data-sf-id="container" data-sf-kind="box" style="position:absolute;left:600px;top:130px;width:400px;height:160px;background:#223344">
