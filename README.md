@@ -66,17 +66,6 @@ Das kannst du vom Agenten verlangen:
 Der Agent erledigt das nach den Anweisungen im [Skill](skills/slidefactory/SKILL.md).
 Du musst selbst keine Python- oder Shell-Befehle ausführen.
 
-## Architektur und Entscheidungen
-
-- [Projektabsicht](intent.md) und [Regeln für Agenten](AGENTS.md).
-- [Lösung und Architekturschaubild](docs/architecture/solution-sketch.md).
-- [Paket und Benutzung](docs/architecture/package-layout.md), [Bedienung](docs/architecture/editor-experience.md).
-- [Implementierungsvertrag](docs/specs/001-working-package.md), [Editor-Ausbau](docs/specs/003-editor-usability.md), [alle Specs](docs/specs/README.md).
-- Entscheidungen: [HTML als Arbeitsstand](docs/decisions/ADR-001-local-editor-transactions.md), [Design-Bibliothek (Vorschlag)](docs/decisions/ADR-002-design-library.md).
-- [Vergleich mit Slidev, PPTist und Presenton](docs/research/2026-10-10-existing-solutions.md).
-
-Echte Präsentationen, Bilder, Notizen und Screenshots gehören nicht in dieses Repository.
-
 ## Das Paket weiterentwickeln
 
 `src/editor/` ist der Editor, `src/designs/` hält Designs und Farbrollen, `src/templates/` Layoutbeispiele.
@@ -92,6 +81,7 @@ python3 -m pytest -q
 Die [CI](.github/workflows/ci.yml) prüft, dass die Startdateien dem Build aus `src/` entsprechen, und führt alle Tests aus.
 `SF_BROWSER=firefox` oder `SF_BROWSER=webkit` wählt einen anderen Testbrowser.
 
+Echte Präsentationen, Bilder und Screenshots gehören nicht in dieses Repository.
 Bei Änderungen in `src/`: `npm run format` und `npm run build` ausführen und die
 erzeugten Dateien unter `skills/slidefactory/assets/` mit committen.
 
