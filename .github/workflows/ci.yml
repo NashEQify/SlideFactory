@@ -31,8 +31,9 @@ jobs:
           git diff --exit-code --stat -- skills/slidefactory/assets
 
       - run: python3 -m pip install --break-system-packages -r requirements-dev.txt
-      # PDF checks read the printed output with pdfinfo/pdftotext.
-      - run: apt-get update && apt-get install -y --no-install-recommends poppler-utils
+      # PDF checks read the printed output with pdfinfo/pdftotext and embed
+      # DejaVu Sans, which the Playwright image does not ship.
+      - run: apt-get update && apt-get install -y --no-install-recommends poppler-utils fonts-dejavu-core
 
       - name: Tests
         run: python3 -m pytest -q -n auto
