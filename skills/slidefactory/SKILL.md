@@ -37,6 +37,8 @@ titles are whole sentences. Its agenda slide uses `agenda-card` surfaces whose
 arrows are slide links to each chapter's first slide; chapter slides carry an
 `agenda-tracker` box of slide links at the top with `on` on the current chapter.
 Both are plain markup: when chapters change, update every tracker, card and link.
+Clean MBB declares its own three color looks instead of the shared Cyan/Indigo
+schemes: `night-turquoise` (default), `petrol-amber` and `paper-marine` (light).
 All six base files include `git@griessing.com` in the HTML author metadata.
 
 For revisions, the user's **latest saved HTML** is the input. Read it before

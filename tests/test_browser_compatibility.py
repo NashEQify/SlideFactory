@@ -17,6 +17,8 @@ from test_editor_e2e import PACKAGE, _cli, _download, _edit, _meta, browser_fact
 # the three design overview slides add ~9 KiB. Clean MBB embeds its five Latin
 # WOFF2 subsets (~77 KiB, ~103 KiB as base64) and nothing else.
 BUDGET_KIB = {'consulting-blank.html': 208, 'editorial-blank.html': 208, 'mbb-blank.html': 312}
+# A non-default look per template; Clean MBB declares its own looks.
+LOOK = {'consulting-blank.html': 'indigo-light', 'editorial-blank.html': 'indigo-light', 'mbb-blank.html': 'paper-marine'}
 
 
 @pytest.mark.parametrize('template', list(BUDGET_KIB))
@@ -33,7 +35,7 @@ def test_empty_template_offline_file_handoff_and_presenter(tmp_path, browser_fac
     faces = path.read_text().count('@font-face')
     assert faces == (5 if template == 'mbb-blank.html' else 0)
     _edit(page)
-    page.get_by_label('Farbschema', exact=True).select_option('indigo-light')
+    page.get_by_label('Farbschema', exact=True).select_option(LOOK[template])
     page.get_by_role('button', name='Kommentare', exact=True).click()
     page.get_by_label('Bearbeitungskommentar', exact=True).fill('Offline file contribution')
     saved = _download(page, tmp_path / 'complete-handoff.html')
@@ -52,6 +54,6 @@ def test_empty_template_offline_file_handoff_and_presenter(tmp_path, browser_fac
     fresh = browser_factory(saved)
     # The comment lands on the slide shown first: the opening design overview slide.
     assert _meta(fresh)['guidance']['design-type']['text'] == 'Offline file contribution'
-    assert _meta(fresh)['colorScheme'] == 'indigo-light'
+    assert _meta(fresh)['colorScheme'] == LOOK[template]
     _edit(fresh)
     expect(fresh.get_by_role('button', name='Fertig', exact=True)).to_be_visible()

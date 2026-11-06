@@ -69,7 +69,6 @@ try {
   console.warn('Build without minifier; npm ci enables compact ready files.');
 }
 if (/<\/script/i.test(runtime)) throw Error('Runtime must not contain a literal script end tag.');
-const schemes = JSON.parse(schemesText);
 const editorVersion = '1.8.0',
   fingerprint = (value) =>
     createHash('sha256').update(value.replace(/\r\n/g, '\n'), 'utf8').digest('hex');
@@ -94,6 +93,8 @@ await writeFile(
 const designs = { consulting: 'Consulting', editorial: 'Editorial', mbb: 'Clean MBB' };
 // Embedded fonts: a design's Family-Weight.woff2 files lead its CSS as data URLs, after compaction.
 const designFonts = { mbb: 'src/designs/mbb-fonts' };
+// A design may bring its own color looks; the first is its default. Others share schemes.json.
+const designSchemes = { mbb: 'src/designs/mbb-schemes.json' };
 const fontFaces = async (folder) => {
   const files = (await readdir(path.join(root, folder))).filter((name) => name.endsWith('.woff2'));
   const faces = await Promise.all(
@@ -113,6 +114,9 @@ for (const [design, designName] of Object.entries(designs)) {
     read(`src/designs/${design}-overview.html`),
   ]);
   const fonts = designFonts[design] ? await fontFaces(designFonts[design]) : '';
+  const looksText = designSchemes[design] ? await read(designSchemes[design]) : schemesText;
+  const looks = JSON.parse(looksText);
+  const defaultScheme = designSchemes[design] ? Object.keys(looks)[0] : 'cyan-dark';
   const css = fonts + compactCss(readableCss);
   // Every starter opens with its design overview; deck.py new leaves it out of a new deck.
   const overview = withSizes(overviewSource, readableCss).trim();
@@ -123,20 +127,20 @@ for (const [design, designName] of Object.entries(designs)) {
   const metadata = {
     schemaVersion: 1,
     deckId: stableId('deck', design),
-    revision: stableId('revision', design, css, editorCss, runtime, layout, schemesText),
+    revision: stableId('revision', design, css, editorCss, runtime, layout, looksText),
     title: `SlideFactory · ${designName}`,
     templateId: design,
     templateVersion: '1.0.0',
-    colorScheme: 'cyan-dark',
+    colorScheme: defaultScheme,
     pageWidth: 1600,
     pageHeight: 900,
     notes: Object.fromEntries(slideIds.map((id) => [id, ''])),
     guidance: Object.fromEntries(slideIds.map((id) => [id, { text: '', status: 'open' }])),
   };
-  const theme = `:root{${Object.entries(schemes['cyan-dark'].tokens)
+  const theme = `:root{${Object.entries(looks[defaultScheme].tokens)
     .map(([key, value]) => `--sf-${key}:${value};`)
     .join('')}}`;
-  const html = `<!DOCTYPE html>\n<html lang="de"><head><meta charset="utf-8"><meta name="author" content="git@griessing.com"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${metadata.title}</title>\n<style id="sf-theme-tokens">${theme}</style>\n<style id="sf-design">${css}</style>\n<style id="sf-editor-styles">${editorCss}</style>\n</head><body class="sf-design-${design}">\n${layout.replaceAll('{{SYNTHETIC_IMAGE}}', imageUrl)}\n<script id="sf-document" type="application/json">${json(metadata)}</script>\n<script id="sf-color-schemes" type="application/json">${json(schemes)}</script>\n<script id="sf-editor-manifest" type="application/json">${json(manifest)}</script>\n<script id="sf-runtime">${runtime}</script>\n</body></html>\n`;
+  const html = `<!DOCTYPE html>\n<html lang="de"><head><meta charset="utf-8"><meta name="author" content="git@griessing.com"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${metadata.title}</title>\n<style id="sf-theme-tokens">${theme}</style>\n<style id="sf-design">${css}</style>\n<style id="sf-editor-styles">${editorCss}</style>\n</head><body class="sf-design-${design}">\n${layout.replaceAll('{{SYNTHETIC_IMAGE}}', imageUrl)}\n<script id="sf-document" type="application/json">${json(metadata)}</script>\n<script id="sf-color-schemes" type="application/json">${json(looks)}</script>\n<script id="sf-editor-manifest" type="application/json">${json(manifest)}</script>\n<script id="sf-runtime">${runtime}</script>\n</body></html>\n`;
   const filename = `${design}.html`;
   await writeFile(path.join(root, 'skills/slidefactory/assets', filename), html);
   console.log(`Built ${filename} (${Buffer.byteLength(html)} bytes)`);
@@ -145,7 +149,7 @@ for (const [design, designName] of Object.entries(designs)) {
   const blankMeta = {
     ...metadata,
     deckId: stableId('deck', design, 'blank'),
-    revision: stableId('revision', design, 'blank', css, editorCss, runtime, schemesText, overview),
+    revision: stableId('revision', design, 'blank', css, editorCss, runtime, looksText, overview),
     notes: Object.fromEntries(blankIds.map((id) => [id, ''])),
     guidance: Object.fromEntries(blankIds.map((id) => [id, { text: '', status: 'open' }])),
   };

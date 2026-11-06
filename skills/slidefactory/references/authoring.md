@@ -229,8 +229,10 @@ originals, not draft aliases. Missing storage/digest still permits HTML saving.
 every load. Use tokens for text, surfaces and SVG. Add schemes in this map without
 changing the editor. Layout/design identity and color scheme are independent.
 
-The ready layouts each support cyan/amber and indigo/green in dark/light:
-`cyan-dark`, `cyan-light`, `indigo-dark`, `indigo-light`. A palette does not recolor
+Consulting and Editorial support cyan/amber and indigo/green in dark/light:
+`cyan-dark`, `cyan-light`, `indigo-dark`, `indigo-light`. Clean MBB brings its
+own looks from `src/designs/mbb-schemes.json`: `night-turquoise` (default),
+`petrol-amber`, `paper-marine`. A palette does not recolor
 bitmap pixels, logos, semantic status colors or SVG mask black/white. Keep these
 deliberate; review contrast in both modes. Use system fonts or embedded licensed
 fonts, never CDN fonts. Additional designs use the same markers/runtime contract.

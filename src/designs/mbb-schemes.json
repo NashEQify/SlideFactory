@@ -1,0 +1,5 @@
+{
+  "night-turquoise": {"label": "Nacht · Türkis", "tokens": {"background": "#07101F", "text": "#F2F7FB", "muted": "#A9B8CC", "accent": "#2EE6E6", "accent2": "#FF8A73", "surface": "#0F1D35", "border": "#26395A"}},
+  "petrol-amber": {"label": "Petrol · Bernstein", "tokens": {"background": "#10252D", "text": "#F0F6F5", "muted": "#B8CCCC", "accent": "#75D9D0", "accent2": "#F2C078", "surface": "#1A343D", "border": "#36545D"}},
+  "paper-marine": {"label": "Hell · Marine", "tokens": {"background": "#F6F7F9", "text": "#0E1B33", "muted": "#4E5B70", "accent": "#00727A", "accent2": "#B8412C", "surface": "#E6EBF2", "border": "#C3CCD8"}}
+}
