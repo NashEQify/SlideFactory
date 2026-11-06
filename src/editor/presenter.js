@@ -90,10 +90,13 @@ function createPresenter(doc, previews, owner) {
         : target,
     };
   }
+  // Deep dives leave the storyline like hidden slides: no plan, part, preview or list entry.
   const title = (entry, index) => ({
     id: entry.id,
-    hidden: entry.hidden,
-    title: `${index + 1} · ${String(entry.title || 'Folie')
+    hidden: entry.hidden || !!entry.deepDive,
+    title: `${entry.deepDive ? 'Deep Dive' : doc.slideNumber(doc.slides()[index])} · ${String(
+      entry.deepDive || entry.title || 'Folie',
+    )
       .trim()
       .slice(0, 70)}`,
     duration: entry.duration,
@@ -174,8 +177,16 @@ function createPresenter(doc, previews, owner) {
     const index = owner.index(),
       entry = doc.inventory()[index];
     if (!entry) return;
+    // An open deep dive takes the current preview and notes; the timers stay on the main slide.
+    const dive = owner.deepDive?.() || null,
+      diveSlide = dive && doc.slide(dive),
+      shownId = diveSlide ? dive : entry.id;
     const previous = active.state,
-      navigating = force || previous?.slideId !== entry.id || previous?.index !== index;
+      navigating =
+        force ||
+        previous?.slideId !== entry.id ||
+        previous?.index !== index ||
+        (previous?.deepDiveId ?? null) !== (diveSlide ? dive : null);
     const inventoryPatch = inventory(event, force),
       ids = event?.slideIds || [],
       paths = event?.metaPaths || [],
@@ -189,18 +200,20 @@ function createPresenter(doc, previews, owner) {
         previousId,
         nextId,
         duration: duration(entry),
+        deepDiveId: diveSlide ? dive : null,
+        deepDive: diveSlide ? doc.deepDiveName(diveSlide) : null,
       });
     if (
       navigating ||
       paths.some(
         (path) =>
           ['notes', 'notesProvenance', 'notesFormat'].includes(path[0]) &&
-          (path.length === 1 || path[1] === entry.id),
+          (path.length === 1 || path[1] === shownId),
       )
     ) {
-      Object.assign(state, { notesHtml: notesCodec.display(doc.meta, entry.id) });
+      Object.assign(state, { notesHtml: notesCodec.display(doc.meta, shownId) });
     }
-    const viewIds = [entry.id, nextId],
+    const viewIds = [shownId, nextId],
       views = [];
     for (let position = 0; position < 2; position++) {
       const id = viewIds[position],
@@ -323,6 +336,7 @@ function createPresenter(doc, previews, owner) {
       } catch {}
       clock();
     } else if (command.command === 'return-jump') owner.returnJump?.();
+    else if (command.command === 'close-deep-dive') owner.closeDeepDive?.();
   }
   function popupRuntime(config) {
     let state = null,
@@ -491,6 +505,10 @@ function createPresenter(doc, previews, owner) {
       select.value = state.slideId;
       get('previous').disabled = !state.previousId;
       get('next').disabled = !state.nextId;
+      get('deep-dive').hidden = !state.deepDive;
+      get('deep-dive-name').textContent = state.deepDive
+        ? `Deep Dive offen: ${state.deepDive}`
+        : '';
       if ('notesHtml' in patch) get('notes').innerHTML = state.notesHtml;
       let refit = false;
       (message.views || []).forEach((source, index) => {
@@ -517,6 +535,11 @@ function createPresenter(doc, previews, owner) {
     window.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
         event.preventDefault();
+        // An open deep dive closes first; the presenter itself closes on the next Escape.
+        if (state?.deepDive && connected) {
+          send('close-deep-dive');
+          return;
+        }
         close();
         window.close();
         return;
@@ -533,6 +556,8 @@ function createPresenter(doc, previews, owner) {
       )
         return;
       if (event.target instanceof Element && event.target.closest('input,select,textarea')) return;
+      // Storyline keys never move the main slide behind an open deep dive.
+      if (state.deepDive) return;
       if (event.key === 'Backspace') {
         event.preventDefault();
         send('return-jump', {});
@@ -557,6 +582,7 @@ function createPresenter(doc, previews, owner) {
       close();
       window.close();
     });
+    get('deep-dive-close').addEventListener('click', () => send('close-deep-dive'));
     for (const action of ['start', 'pause', 'stop'])
       get(action).addEventListener('click', () => send('timer', { action }));
     get('end-time').addEventListener('change', (event) =>
@@ -643,13 +669,15 @@ iframe{position:absolute;left:0;top:0;width:1600px;height:900px;border:0;transfo
 #notes{margin-top:12px;min-height:120px;max-height:none;border:0;padding:12px;overflow:visible}
 #notes:empty::before{content:'Keine Referentennotizen';color:#b8c9ca}
 #connection{margin-top:8px}
+#deep-dive{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 48px 8px 0;padding:6px 10px;border:1px solid #86dbcb;border-radius:4px;background:#1c2b34}
+#deep-dive-name{font-weight:700;color:#86dbcb}
 @media(max-width:650px){.previews{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
 .timing{gap:4px}
 #timer{font-size:22px}
 #wall-clock{font-size:16px}
 }
 </style></head><body><button id="close" type="button" aria-label="Referentenansicht schließen" title="Referentenansicht schließen (Esc)">×</button>
-<div class="previews"><section aria-label="Aktuelle Folie"><div class="preview"><iframe id="current-preview" title="Aktuelle Folie" sandbox="allow-same-origin" tabindex="-1"></iframe></div><nav class="navigation" aria-label="Foliennavigation"><button id="previous" aria-label="Vorherige Folie">‹</button><select id="slide" aria-label="Folie"></select><button id="next" aria-label="Nächste Folie">›</button></nav></section><section aria-label="Nächste Folie"><div class="preview"><iframe id="next-preview" title="Nächste Folie" sandbox="allow-same-origin" tabindex="-1"></iframe></div><div class="timing"><output id="timer" role="timer" aria-label="Verstrichene Zeit">00:00</output><button id="start" aria-label="Start" title="Timer starten">▶</button><button id="pause" aria-label="Pause" title="Timer pausieren">Ⅱ</button><button id="stop" aria-label="Stopp" title="Timer anhalten und alle Zeiten zurücksetzen">■</button><span id="timer-state"></span><time id="wall-clock" aria-label="Uhrzeit"></time><span class="end"><label for="end-time">Ende</label><input id="end-time" type="time" aria-label="Zieluhrzeit"><button id="end-clear" aria-label="Zieluhrzeit löschen" title="Zieluhrzeit löschen" hidden>×</button><strong id="countdown" hidden></strong></span><strong id="pace" aria-label="Abweichung vom Zeitplan" hidden></strong><span id="slide-time" aria-label="Zeit auf dieser Folie"></span><span id="target" aria-label="Zeit gegenüber Plan"></span></div></section></div>
+<div id="deep-dive" role="status" hidden><span id="deep-dive-name"></span><button id="deep-dive-close" type="button">Deep Dive schließen</button></div><div class="previews"><section aria-label="Aktuelle Folie"><div class="preview"><iframe id="current-preview" title="Aktuelle Folie" sandbox="allow-same-origin" tabindex="-1"></iframe></div><nav class="navigation" aria-label="Foliennavigation"><button id="previous" aria-label="Vorherige Folie">‹</button><select id="slide" aria-label="Folie"></select><button id="next" aria-label="Nächste Folie">›</button></nav></section><section aria-label="Nächste Folie"><div class="preview"><iframe id="next-preview" title="Nächste Folie" sandbox="allow-same-origin" tabindex="-1"></iframe></div><div class="timing"><output id="timer" role="timer" aria-label="Verstrichene Zeit">00:00</output><button id="start" aria-label="Start" title="Timer starten">▶</button><button id="pause" aria-label="Pause" title="Timer pausieren">Ⅱ</button><button id="stop" aria-label="Stopp" title="Timer anhalten und alle Zeiten zurücksetzen">■</button><span id="timer-state"></span><time id="wall-clock" aria-label="Uhrzeit"></time><span class="end"><label for="end-time">Ende</label><input id="end-time" type="time" aria-label="Zieluhrzeit"><button id="end-clear" aria-label="Zieluhrzeit löschen" title="Zieluhrzeit löschen" hidden>×</button><strong id="countdown" hidden></strong></span><strong id="pace" aria-label="Abweichung vom Zeitplan" hidden></strong><span id="slide-time" aria-label="Zeit auf dieser Folie"></span><span id="target" aria-label="Zeit gegenüber Plan"></span></div></section></div>
 <div id="notes" class="sf-note-input" role="region" aria-label="Referentennotizen" tabindex="0"></div><div id="connection" role="status">Verbindung wird hergestellt …</div><script>(${popupRuntime.toString()})(${config});</scr` +
         'ipt></body></html>',
     );

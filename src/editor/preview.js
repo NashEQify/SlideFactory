@@ -322,7 +322,7 @@ function createPreviews(doc) {
       return source(slide, true);
     } catch (error) {
       throw Error(
-        `${stage} der Folie ${doc.slideIndex(slide.dataset.sfSlide) + 1}: ${error.message}`,
+        `${stage} der ${doc.isDeepDive(slide) ? `Deep Dive · ${doc.deepDiveName(slide)}` : `Folie ${doc.slideNumber(slide)}`}: ${error.message}`,
       );
     } finally {
       clearTimeout(timeout);

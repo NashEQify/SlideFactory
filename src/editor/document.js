@@ -90,6 +90,9 @@ async function createDocument() {
       throw Error('Ungültige Teildauer.');
   }
   const isHidden = (slide) => slide.hasAttribute('data-sf-hidden');
+  // Deep-dive slides (data-sf-deep-dive) stay out of the storyline; triggers open them as an overlay.
+  const isDeepDive = (slide) => !!slide?.hasAttribute('data-sf-deep-dive');
+  const offStory = (slide) => isHidden(slide) || isDeepDive(slide);
   const timing = (slide) => ({
     duration: Number(slide.dataset.sfDuration) || null,
     part: slide.dataset.sfPart?.trim() || null,
@@ -429,7 +432,13 @@ async function createDocument() {
           .filter(titleCandidate)
           .map((node) => node.dataset.sfId),
       );
-      return freeze({ id, title: titleText(title), hidden: isHidden(slide), ...timing(slide) });
+      return freeze({
+        id,
+        title: titleText(title),
+        hidden: isHidden(slide),
+        deepDive: deepDiveName(slide),
+        ...timing(slide),
+      });
     });
     for (const element of deck.querySelectorAll('[data-sf-id]')) {
       objects.set(element.dataset.sfId, element);
@@ -1425,6 +1434,7 @@ async function createDocument() {
               id: sid,
               title,
               hidden: isHidden(slide),
+              deepDive: old.deepDive,
               ...times,
             });
             inventory = true;
@@ -2123,14 +2133,47 @@ async function createDocument() {
   }
   function adjacent(position, step, includeHidden = false) {
     for (let i = position + step; i >= 0 && i < slideOrder.length; i += step)
-      if (includeHidden || !isHidden(slideOrder[i])) return i;
+      if (includeHidden || !offStory(slideOrder[i])) return i;
     return -1;
   }
-  const visibleSlides = () => slideOrder.filter((slide) => !isHidden(slide));
+  const visibleSlides = () => slideOrder.filter((slide) => !offStory(slide));
+  // Storyline numbers skip deep dives (hidden slides keep theirs); a deep dive has none.
+  const numbered = () => slideOrder.filter((slide) => !isDeepDive(slide));
+  const slideNumber = (slide) => (isDeepDive(slide) ? 0 : numbered().indexOf(slide) + 1);
+  // An empty data-sf-deep-dive value resolves to "Deep Dive n", counted over deep dives in deck order.
+  function deepDiveName(slide) {
+    if (!isDeepDive(slide)) return null;
+    const name = slide.getAttribute('data-sf-deep-dive').trim();
+    return name || `Deep Dive ${slideOrder.filter(isDeepDive).indexOf(slide) + 1}`;
+  }
+  // The deep-dive slide a trigger names, or null when the target is missing or not a deep dive.
+  function deepDiveTarget(element) {
+    const slide = slideNodes.get(element?.getAttribute('data-sf-deep-dive-target'));
+    return isDeepDive(slide) ? slide : null;
+  }
+  // Deep dives named by triggers or slide links on the given storyline slides, in deck order, once each.
+  function appendix(slides) {
+    const named = new Set();
+    for (const slide of slides) {
+      if (isDeepDive(slide)) continue;
+      for (const node of slide.querySelectorAll('[data-sf-id][data-sf-deep-dive-target]'))
+        named.add(deepDiveTarget(node));
+      for (const link of slide.querySelectorAll('a[href^="#"]')) {
+        let id = null;
+        try {
+          id = decodeURIComponent(link.getAttribute('href').slice(1));
+        } catch {}
+        const target = slideNodes.get(id);
+        if (isDeepDive(target)) named.add(target);
+      }
+    }
+    return slideOrder.filter((slide) => named.has(slide));
+  }
   function toggleSlide(id) {
     settle('command');
     const slide = slideNodes.get(id);
-    if (!slide || (!isHidden(slide) && visibleSlides().length === 1)) return false;
+    if (!slide || isDeepDive(slide) || (!isHidden(slide) && visibleSlides().length === 1))
+      return false;
     return run(
       isHidden(slide) ? 'Folie einblenden' : 'Folie ausblenden',
       [{ kind: 'attrs', id, names: ['data-sf-hidden'] }],
@@ -2140,7 +2183,7 @@ async function createDocument() {
   function deleteSlide(id) {
     settle('command');
     const slide = slideNodes.get(id);
-    if (!slide || slideOrder.length === 1 || (!isHidden(slide) && visibleSlides().length === 1))
+    if (!slide || slideOrder.length === 1 || (!offStory(slide) && visibleSlides().length === 1))
       return false;
     return run('Folie löschen', [{ kind: 'slide', id }], () => {
       slide.remove();
@@ -2201,6 +2244,11 @@ async function createDocument() {
     deleteSlide,
     toggleSlide,
     isHidden,
+    isDeepDive,
+    deepDiveName,
+    deepDiveTarget,
+    appendix,
+    slideNumber,
     visibleSlides,
     adjacent,
     slide: (id) => slideNodes.get(id) || null,

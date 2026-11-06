@@ -4,14 +4,33 @@ function createPrinter(doc, previews, owner) {
   let output = null,
     request = 0,
     active = null;
+  // Native printing keeps DOM order; runtime marks move named deep dives behind the storyline.
+  function clearMarks() {
+    for (const slide of doc.slides()) {
+      delete slide.dataset.sfRuntimePrint;
+      delete slide.dataset.sfRuntimePrintLast;
+    }
+  }
   function nativePrint() {
     doc.settle('print');
     previews.beginNativePrint();
+    clearMarks();
+    const story = doc.visibleSlides(),
+      appendix = doc.appendix(story);
+    for (const slide of doc.slides())
+      if (doc.isDeepDive(slide))
+        slide.dataset.sfRuntimePrint = appendix.includes(slide) ? 'appendix' : 'omit';
+    const last = appendix.at(-1) || story.at(-1);
+    if (last) last.dataset.sfRuntimePrintLast = '';
     // Browser-menu printing is synchronous; awaited hooks belong to print().
-    for (const slide of doc.visibleSlides()) previews.prepareNative(slide);
+    for (const slide of [...story, ...appendix]) previews.prepareNative(slide);
+  }
+  function finishNativePrint() {
+    clearMarks();
+    previews.finishNativePrint();
   }
   window.addEventListener('beforeprint', nativePrint);
-  window.addEventListener('afterprint', previews.finishNativePrint);
+  window.addEventListener('afterprint', finishNativePrint);
   function closeOutput() {
     request++;
     active?.stop();
@@ -21,25 +40,27 @@ function createPrinter(doc, previews, owner) {
   }
   function dispose() {
     closeOutput();
-    previews.finishNativePrint();
+    finishNativePrint();
     window.removeEventListener('beforeprint', nativePrint);
-    window.removeEventListener('afterprint', previews.finishNativePrint);
+    window.removeEventListener('afterprint', finishNativePrint);
   }
+  // A range counts storyline numbers; deep dives follow as the appendix of print().
   function select(value) {
     if (!value.trim()) return doc.visibleSlides();
-    const positions = new Set();
+    const numbered = doc.slides().filter((slide) => !doc.isDeepDive(slide)),
+      positions = new Set();
     for (const part of value.replace(/–/g, '-').split(',')) {
       const match = part.trim().match(/^(\d+)(?:\s*-\s*(\d+))?$/);
       if (!match) throw Error('Bitte Folien als 1,3-5 eingeben oder das Feld leer lassen.');
       const start = Number(match[1]),
         end = Number(match[2] || match[1]);
-      if (start < 1 || end < start || end > doc.slides().length)
-        throw Error(`Bitte Folien zwischen 1 und ${doc.slides().length} auswählen.`);
+      if (start < 1 || end < start || end > numbered.length)
+        throw Error(`Bitte Folien zwischen 1 und ${numbered.length} auswählen.`);
       for (let i = start; i <= end; i++) positions.add(i - 1);
     }
     const selected = [...positions]
       .sort((a, b) => a - b)
-      .map((index) => doc.slides()[index])
+      .map((index) => numbered[index])
       .filter((slide) => !doc.isHidden(slide));
     if (!selected.length) throw Error('Der gewählte Bereich enthält nur ausgeblendete Folien.');
     return selected;
@@ -57,7 +78,12 @@ function createPrinter(doc, previews, owner) {
       return;
     }
     const controller = new AbortController(),
-      slides = [...selected];
+      story = selected.filter((slide) => !doc.isDeepDive(slide)),
+      slides = [...story, ...doc.appendix(story)];
+    const label = (slide) =>
+      doc.isDeepDive(slide)
+        ? `Deep Dive · ${doc.deepDiveName(slide)}`
+        : `Folie ${doc.slideNumber(slide)}`;
     let phase = 'Folien vorbereiten',
       completed = 0,
       phaseStart = Date.now(),
@@ -128,7 +154,7 @@ function createPrinter(doc, previews, owner) {
           () =>
             finish(
               Error(
-                `${stage} der Folie ${number} nach 120 Sekunden nicht bereit. Bitte erneut versuchen oder diese Folie prüfen.`,
+                `${stage} der ${number} nach 120 Sekunden nicht bereit. Bitte erneut versuchen oder diese Folie prüfen.`,
               ),
             ),
           120000,
@@ -147,7 +173,7 @@ function createPrinter(doc, previews, owner) {
             frame.contentDocument.body.getBoundingClientRect();
             finish();
           } catch (error) {
-            finish(Error(`${stage} der Folie ${number}: ${error.message}`));
+            finish(Error(`${stage} der ${number}: ${error.message}`));
           }
         }
         controller.signal.addEventListener('abort', aborted, { once: true });
@@ -206,16 +232,16 @@ function createPrinter(doc, previews, owner) {
           const box = popup.document.createElement('div');
           box.className = 'sf-print-slide';
           const frame = popup.document.createElement('iframe');
-          frame.title = `Folie ${i + 1}`;
+          frame.title = label(slides[i]);
           frame.setAttribute('sandbox', 'allow-same-origin');
-          ready.push(frameReady(frame, doc.slideIndex(slides[i].dataset.sfSlide) + 1));
+          ready.push(frameReady(frame, label(slides[i])));
           frame.srcdoc = sources[i];
           box.append(frame);
           page.append(box);
         } else {
           const heading = popup.document.createElement('h1');
           heading.style.fontSize = '14pt';
-          heading.textContent = `Folie ${doc.slideIndex(slides[i].dataset.sfSlide) + 1}`;
+          heading.textContent = label(slides[i]);
           page.append(heading);
         }
         if (withNotes) {

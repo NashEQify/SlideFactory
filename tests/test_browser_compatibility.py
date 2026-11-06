@@ -15,8 +15,9 @@ from test_editor_e2e import PACKAGE, _cli, _download, _edit, _meta, browser_fact
 # Rich notes, print, structural history and checked release identity add ~30 KiB;
 # the 1.2-1.3 toolbar, shapes, notes pane and slide links bring it to ~180 KiB;
 # the three design overview slides add ~9 KiB. Clean MBB embeds its five Latin
-# WOFF2 subsets (~77 KiB, ~103 KiB as base64) and nothing else.
-BUDGET_KIB = {'consulting-blank.html': 208, 'editorial-blank.html': 208, 'mbb-blank.html': 312}
+# WOFF2 subsets (~77 KiB, ~103 KiB as base64) and nothing else. The deep-dive
+# overlay, presenter sync and print appendix (editor 1.9.0) add ~8 KiB.
+BUDGET_KIB = {'consulting-blank.html': 216, 'editorial-blank.html': 216, 'mbb-blank.html': 320}
 # A non-default look per template; Clean MBB declares its own looks.
 LOOK = {'consulting-blank.html': 'indigo-light', 'editorial-blank.html': 'indigo-light', 'mbb-blank.html': 'paper-marine'}
 

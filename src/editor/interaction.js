@@ -933,9 +933,10 @@ function createInteraction(doc, hooks) {
       hooks.deleteSelection?.();
       return;
     }
+    // A focused deep-dive trigger is a slide object: storyline keys still navigate.
     if (
       event.target.closest?.(
-        'button,input,textarea,select,a[href]:not([data-sf-id]),[role="button"],[role="textbox"]',
+        'button,input,textarea,select,a[href]:not([data-sf-id]),[role="button"]:not([data-sf-deep-dive-target]),[role="textbox"]',
       ) &&
       !['PageDown', 'PageUp'].includes(event.key)
     )
