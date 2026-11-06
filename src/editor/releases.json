@@ -113,5 +113,10 @@
     "manifest": true,
     "cssSha256": "f38c306c9fc1056d980cb199b54837fa415bbc7ccdb4262f2530c9a4f4e0f7bd",
     "runtimeSha256": "565dcfa82ba1f97253911cb23480f39af183b16d2dee002eb63947f13ffcfab5"
+  },
+  "1.8.0": {
+    "manifest": true,
+    "cssSha256": "f38c306c9fc1056d980cb199b54837fa415bbc7ccdb4262f2530c9a4f4e0f7bd",
+    "runtimeSha256": "6c43fa4f4a6ab7d8b1a65b147780be1c76efcfdc460451a68f9ce0c4e3aeb0d2"
   }
 }

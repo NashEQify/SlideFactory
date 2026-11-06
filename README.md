@@ -16,12 +16,13 @@ Zur Weiterarbeit gibst du dem Agenten die neueste gespeicherte HTML.
 - [Clean MBB](skills/slidefactory/assets/mbb.html): dunkler Beratungslook mit Aussagetiteln.
 - Ohne Beispielinhalt: [Consulting leer](skills/slidefactory/assets/consulting-blank.html), [Editorial leer](skills/slidefactory/assets/editorial-blank.html), [Clean MBB leer](skills/slidefactory/assets/mbb-blank.html).
 
-Was der eingebettete Editor (Version 1.8.0) kann:
+Was der eingebettete Editor (Version 1.9.0) kann:
 
 - Text direkt bearbeiten, Objekte verschieben und in der Größe ändern.
 - Bilder einfügen, ersetzen und zuschneiden; Formen, Textfelder und Folien einfügen.
 - Schriftart, Schriftgröße, Farben, Textmarker und Format übertragen.
 - Folien sortieren, ausblenden, löschen; Folienlinks mit Rücksprung, etwa zu Backup-Folien.
+- Deep Dives: Doppelklick auf markierte Fläche öffnet Detailfolie als Overlay.
 - Kommentare und Post-its pro Folie als Hinweise für den Agenten.
 - Referentennotizen direkt unter der Folie.
 - Vollbild und Referentenansicht mit Notizen, nächster Folie und Zeitplan.

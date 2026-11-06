@@ -461,6 +461,10 @@ class Deck:
         for node in self.nodes:
             if "data-sf-link" in node.attrs and "data-sf-id" not in node.attrs:
                 raise DeckError("data-sf-link marks an editable slide-link object and needs data-sf-id.")
+            if "data-sf-deep-dive-target" in node.attrs and "data-sf-id" not in node.attrs:
+                raise DeckError("data-sf-deep-dive-target marks a deep-dive trigger object and needs data-sf-id.")
+            if "data-sf-deep-dive" in node.attrs and "data-sf-slide" not in node.attrs:
+                raise DeckError("data-sf-deep-dive belongs on a slide section.")
             if "data-sf-slide" in node.attrs and node not in self.main.children:
                 raise DeckError("Slides must be direct children of #sf-deck.")
             marked = "data-sf-id" in node.attrs or "data-sf-kind" in node.attrs
@@ -625,6 +629,37 @@ class Deck:
             result.append(item)
         return result
 
+    def deep_dive_name(self, slide):
+        """Resolved deep-dive name, or None for a storyline slide; empty means "Deep Dive n"."""
+        if "data-sf-deep-dive" not in slide.attrs:
+            return None
+        dives = [node for node in self.slides.values() if "data-sf-deep-dive" in node.attrs]
+        return (slide.attrs["data-sf-deep-dive"] or "").strip() or f"Deep Dive {dives.index(slide) + 1}"
+
+    def triggers(self, slide):
+        return [{"id": node.attrs["data-sf-id"], "target": node.attrs["data-sf-deep-dive-target"] or ""}
+                for node in self.objects.values() if "data-sf-deep-dive-target" in node.attrs and node.inside(slide)]
+
+    def deep_dive_errors(self):
+        """Triggers to a missing or non-deep-dive slide, triggers on deep dives, hidden deep dives."""
+        errors = []
+        for number, (identity, slide) in enumerate(self.slides.items(), 1):
+            dive = "data-sf-deep-dive" in slide.attrs
+            if dive and "data-sf-hidden" in slide.attrs:
+                errors.append({"slideId": identity, "slideNumber": number, "error": "deep-dive slide must not also be data-sf-hidden"})
+            for trigger in self.triggers(slide):
+                target = self.slides.get(trigger["target"])
+                if dive:
+                    problem = "trigger on a deep-dive slide (no nesting)"
+                elif target is None:
+                    problem = "trigger target slide is missing"
+                elif "data-sf-deep-dive" not in target.attrs:
+                    problem = "trigger target is not a deep-dive slide"
+                else:
+                    continue
+                errors.append({"slideId": identity, "slideNumber": number, **trigger, "error": problem})
+        return errors
+
     def broken_links(self):
         return [{"slideId": identity, "slideNumber": number, **link}
                 for number, (identity, slide) in enumerate(self.slides.items(), 1)
@@ -742,6 +777,8 @@ def inspection(deck, selector):
                 item["link"] = unquote(node.attrs["href"][1:])
             if "data-sf-layout" in node.attrs:
                 item.update(layout=node.attrs["data-sf-layout"], offsets=layout_offsets(node))
+            if "data-sf-deep-dive-target" in node.attrs:
+                item["deepDiveTarget"] = node.attrs["data-sf-deep-dive-target"]
             if item["kind"] == "text":
                 item["text"] = "".join(TextContent(deck.inner(node)).values)
             if item["kind"] == "image":
@@ -750,6 +787,10 @@ def inspection(deck, selector):
                 item["original"] = image_data(image.attrs["src"])
             objects.append(item)
         result = {"id": identity, "number": list(deck.slides).index(identity) + 1, "notes": deck.meta["notes"].get(identity, ""), "guidance": deck.meta["guidance"].get(identity, {"text": "", "status": "open"}), "objects": objects, "links": deck.links(slide)}
+        if "data-sf-deep-dive" in slide.attrs:
+            result["deepDive"] = deck.deep_dive_name(slide)
+        elif deck.triggers(slide):
+            result["deepDiveTargets"] = deck.triggers(slide)
         if "data-sf-duration" in slide.attrs:
             result["duration"] = float(slide.attrs["data-sf-duration"])
         if "data-sf-part" in slide.attrs:
@@ -893,10 +934,12 @@ def run(args):
     if args.command == "upgrade-editor":
         return upgrade_editor(deck, source_path, args.output)
     if args.command == "validate":
-        broken = deck.broken_links()
-        result = {"valid": not broken, "schemaVersion": 1, "deckId": deck.meta["deckId"], "revision": deck.meta["revision"], "slides": len(deck.slides), "objects": len(deck.objects)}
+        broken, dives = deck.broken_links(), deck.deep_dive_errors()
+        result = {"valid": not broken and not dives, "schemaVersion": 1, "deckId": deck.meta["deckId"], "revision": deck.meta["revision"], "slides": len(deck.slides), "objects": len(deck.objects)}
         if broken:
             result["linkErrors"] = broken
+        if dives:
+            result["deepDiveErrors"] = dives
         return result
     if args.command == "inspect":
         return inspection(deck, args.slide)
@@ -976,6 +1019,9 @@ def run(args):
     broken = checked.broken_links()
     if broken:
         result["linkWarnings"] = broken
+    dives = checked.deep_dive_errors()
+    if dives:
+        result["deepDiveWarnings"] = dives
     return result
 
 

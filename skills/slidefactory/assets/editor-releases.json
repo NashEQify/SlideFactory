@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "current": "1.8.0",
+  "current": "1.9.0",
   "releases": {
     "1.0.0": {
       "manifest": false,
@@ -121,6 +121,11 @@
       "manifest": true,
       "cssSha256": "f38c306c9fc1056d980cb199b54837fa415bbc7ccdb4262f2530c9a4f4e0f7bd",
       "runtimeSha256": "6c43fa4f4a6ab7d8b1a65b147780be1c76efcfdc460451a68f9ce0c4e3aeb0d2"
+    },
+    "1.9.0": {
+      "manifest": true,
+      "cssSha256": "e1edbee6118ccf73cf11817db0d49c043f48b1e7bf5de95d94512535b2a6dc98",
+      "runtimeSha256": "db232d7aca91bab5eb5ea3b0c98793e35546ce50d02cd2722d472b5c98ce92dd"
     }
   }
 }

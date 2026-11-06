@@ -69,7 +69,7 @@ try {
   console.warn('Build without minifier; npm ci enables compact ready files.');
 }
 if (/<\/script/i.test(runtime)) throw Error('Runtime must not contain a literal script end tag.');
-const editorVersion = '1.8.0',
+const editorVersion = '1.9.0',
   fingerprint = (value) =>
     createHash('sha256').update(value.replace(/\r\n/g, '\n'), 'utf8').digest('hex');
 const manifest = {

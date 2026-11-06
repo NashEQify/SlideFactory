@@ -49,6 +49,17 @@ function startEditor(doc) {
     '<button type="button" data-action="return-jump" title="Zurück zur Ausgangsfolie (Rücktaste)" aria-keyshortcuts="Backspace"></button>';
   document.body.append(returnChip);
   const jumps = [];
+  // Deep-dive overlay: an isolated projection above the current slide; nothing about it is saved.
+  const deepDive = document.createElement('div');
+  deepDive.id = 'sf-deep-dive';
+  deepDive.dataset.sfTransient = '';
+  deepDive.hidden = true;
+  deepDive.setAttribute('role', 'dialog');
+  deepDive.setAttribute('aria-modal', 'true');
+  deepDive.innerHTML =
+    '<div class="sf-deep-dive-header"><span class="sf-deep-dive-name"></span><button type="button" aria-label="Deep Dive schließen" title="Deep Dive schließen (Esc)">×</button></div><div class="sf-deep-dive-stage"></div>';
+  document.body.append(deepDive);
+  let openDive = null;
   const viewStyle = document.createElement('style');
   viewStyle.dataset.sfTransient = '';
   document.head.append(viewStyle);
@@ -112,6 +123,8 @@ function startEditor(doc) {
     message,
     error,
     returnJump: () => returnJump(),
+    deepDive: () => openDive?.id || null,
+    closeDeepDive: () => closeDeepDive(),
   });
   previews.onContextChange(() => presenter.sync({ type: 'change', theme: true }));
   let thumbnailOrder = null,
@@ -142,6 +155,7 @@ function startEditor(doc) {
       viewStyle.textContent = `body[data-sf-runtime-running] #sf-deck{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) scale(${scale});transform-origin:center;width:1600px;height:900px;box-shadow:none}`;
       interaction.update();
       positionPlayer();
+      positionDeepDive();
       return;
     }
     const compact = innerWidth < 760;
@@ -198,6 +212,7 @@ function startEditor(doc) {
     viewStyle.textContent = `body[data-sf-runtime-running] #sf-deck{position:fixed;left:${left + (innerWidth - left - right) / 2}px;top:${top + availableHeight / 2 + 16}px;transform:translate(-50%,-50%) scale(${scale});transform-origin:center;width:1600px;height:900px;}`;
     interaction.update();
     positionPlayer();
+    positionDeepDive();
     if (!get('#sf-menu').hidden) positionMenu();
     followCurrentThumbnail();
     updateThumbnailFallback();
@@ -344,7 +359,9 @@ function startEditor(doc) {
       current.dataset.sfRuntimeVisible = 'true';
       visibleSlide = current;
     }
-    get('#sf-counter').textContent = `Folie ${index + 1} / ${slides.length}`;
+    get('#sf-counter').textContent = doc.isDeepDive(current)
+      ? slideLabel(current)
+      : `Folie ${doc.slideNumber(current)} / ${storyCount()}`;
     button('previous').disabled = doc.adjacent(index, -1, interaction.editing) < 0;
     button('next').disabled = doc.adjacent(index, 1, interaction.editing) < 0;
     historyButtons();
@@ -422,8 +439,9 @@ function startEditor(doc) {
       position = doc.slideIndex(id),
       entry = doc.inventory()[position];
     if (item && entry)
-      item.querySelector('.sf-thumbnail-caption').textContent =
-        `${position + 1} · ${entry.hidden ? 'Ausgeblendet · ' : ''}${entry.title.slice(0, 52)}`;
+      item.querySelector('.sf-thumbnail-caption').textContent = entry.deepDive
+        ? `Deep Dive · ${entry.deepDive}`.slice(0, 64)
+        : `${doc.slideNumber(doc.slide(id))} · ${entry.hidden ? 'Ausgeblendet · ' : ''}${entry.title.slice(0, 52)}`;
   }
   function clearThumbnailDrop() {
     thumbnailDrop?.entry.classList.remove('sf-drop-before', 'sf-drop-after');
@@ -572,18 +590,23 @@ function startEditor(doc) {
       reason = 'Mindestens eine Folie muss sichtbar bleiben.';
     for (const [id, item] of thumbnailItems) {
       const i = doc.slideIndex(id),
-        hidden = doc.isHidden(doc.slide(id)),
-        locked = !hidden && only;
+        slide = doc.slide(id),
+        hidden = doc.isHidden(slide),
+        dive = doc.isDeepDive(slide),
+        locked = !hidden && !dive && only;
       const [eye, remove] = item.nextElementSibling.children;
-      const label = `Folie ${i + 1}`,
-        action = `${label} ${hidden ? 'einblenden' : 'ausblenden'}`;
+      const label = slideLabel(slide),
+        action = `${label} ${hidden ? 'einblenden' : 'ausblenden'}`,
+        outside = 'Deep Dives stehen immer außerhalb der Folienfolge.';
       eye.innerHTML = editorIcon(hidden ? 'eye-off' : 'eye');
-      eye.disabled = remove.disabled = locked;
-      eye.setAttribute('aria-label', locked ? `${action}. ${reason}` : action);
-      eye.title = locked ? reason : action;
+      eye.disabled = locked || dive;
+      remove.disabled = locked;
+      eye.setAttribute('aria-label', locked ? `${action}. ${reason}` : dive ? outside : action);
+      eye.title = locked ? reason : dive ? outside : action;
       remove.title = locked ? reason : `${label} löschen`;
+      remove.setAttribute('aria-label', `${label} löschen`);
       item.setAttribute('aria-label', label + (hidden ? ' · ausgeblendet' : ''));
-      item.classList.toggle('sf-thumbnail-hidden', hidden);
+      item.classList.toggle('sf-thumbnail-hidden', hidden || dive);
       get('#sf-slide-choice').options[i].textContent = label + (hidden ? ' · ausgeblendet' : '');
     }
   }
@@ -706,7 +729,10 @@ function startEditor(doc) {
   function renderPanel() {
     const id = hooks.currentSlide()?.dataset.sfSlide;
     if (!id) return;
-    get('#sf-panel-slide').textContent = `Folie ${index + 1} von ${doc.slides().length}`;
+    const current = doc.slides()[index];
+    get('#sf-panel-slide').textContent = doc.isDeepDive(current)
+      ? slideLabel(current)
+      : `Folie ${doc.slideNumber(current)} von ${storyCount()}`;
     for (const field of [get('#sf-guidance'), get('#sf-notes')]) {
       if (document.activeElement !== field || field.dataset.slide !== id) {
         if (field.id === 'sf-notes')
@@ -737,6 +763,13 @@ function startEditor(doc) {
     fit();
   }
   function goTo(position) {
+    const target = doc.slides()[Math.max(0, Math.min(doc.slides().length - 1, position))];
+    // Presenting, a deep dive opens above the current slide instead of replacing it.
+    if (!interaction.editing && doc.isDeepDive(target)) {
+      openDeepDive(target.dataset.sfSlide);
+      return;
+    }
+    closeDeepDive(false);
     closeMenu(false);
     textTools.reset();
     doc.settle('navigation');
@@ -786,15 +819,22 @@ function startEditor(doc) {
       control = returnChip.firstElementChild;
     returnChip.hidden = !origin || interaction.editing;
     if (returnChip.hidden) return;
-    control.textContent = `↩ Zurück zu Folie ${doc.slideIndex(origin) + 1}`;
+    control.textContent = `↩ Zurück zu Folie ${doc.slideNumber(doc.slide(origin))}`;
     positionPlayer();
   }
   function navigate(delta) {
     const i = doc.adjacent(index, delta, interaction.editing);
     if (i >= 0) goTo(i);
   }
+  function slideLabel(slide) {
+    return doc.isDeepDive(slide)
+      ? `Deep Dive · ${doc.deepDiveName(slide)}`
+      : `Folie ${doc.slideNumber(slide)}`;
+  }
+  const storyCount = () => doc.slides().filter((slide) => !doc.isDeepDive(slide)).length;
   function preferVisible() {
-    if (!interaction.editing && doc.isHidden(doc.slides()[index])) {
+    const current = doc.slides()[index];
+    if (!interaction.editing && (doc.isHidden(current) || doc.isDeepDive(current))) {
       const next = doc.adjacent(index, 1),
         i = next >= 0 ? next : doc.adjacent(index, -1);
       if (i >= 0) {
@@ -1049,15 +1089,18 @@ function startEditor(doc) {
       doc.slides().forEach((slide, position) => {
         const id = slide.dataset.sfSlide;
         if (id === current) return;
+        const entry = doc.inventory()[position],
+          label = slideLabel(slide);
         const control = choice(
-          `${position + 1} · ${doc.inventory()[position]?.title || 'Folie'}`.slice(0, 64),
+          (entry?.deepDive
+            ? label
+            : `${doc.slideNumber(slide)} · ${entry?.title || 'Folie'}`
+          ).slice(0, 64),
           () => {
             try {
               if (kind === 'link') {
-                if (objects.insertLink(id))
-                  message(`Folienlink auf Folie ${position + 1} eingefügt.`);
-              } else if (objects.setLinkTarget(id))
-                message(`Linkziel ist jetzt Folie ${position + 1}.`);
+                if (objects.insertLink(id)) message(`Folienlink auf ${label} eingefügt.`);
+              } else if (objects.setLinkTarget(id)) message(`Linkziel ist jetzt ${label}.`);
             } catch (failure) {
               error(failure.message);
             }
@@ -1237,10 +1280,12 @@ function startEditor(doc) {
       }
     },
     edit: () => {
+      closeDeepDive(false);
       closeMenu(false);
       textTools.reset();
       doc.settle(interaction.editing ? 'done' : 'command');
       interaction.setEditing(!interaction.editing);
+      configureTriggers();
       button('edit').textContent = interaction.editing ? 'Fertig' : 'Bearbeiten';
       if (!interaction.editing && panelMode === 'guidance') openPanel('guidance');
       if (!preferVisible()) renderSlides();
@@ -1391,7 +1436,162 @@ function startEditor(doc) {
       }
       event.preventDefault();
       link.blur();
-      follow(id);
+      if (doc.isDeepDive(doc.slide(id))) openDeepDive(id, link);
+      else follow(id);
+    },
+    true,
+  );
+  // Triggers act only in view and fullscreen mode; edit mode keeps double-click for editing.
+  const triggerSelector = '[data-sf-id][data-sf-deep-dive-target]';
+  function storyTrigger(node) {
+    const trigger = node?.closest?.(triggerSelector);
+    return trigger && !interaction.editing && !doc.isDeepDive(trigger.closest('[data-sf-slide]'))
+      ? trigger
+      : null;
+  }
+  function openTrigger(trigger) {
+    const slide = doc.deepDiveTarget(trigger);
+    if (slide) openDeepDive(slide.dataset.sfSlide, trigger);
+    else error('Das Deep-Dive-Ziel dieser Fläche existiert nicht mehr.');
+  }
+  doc.deck.addEventListener('dblclick', (event) => {
+    const trigger = storyTrigger(event.target);
+    if (!trigger) return;
+    event.preventDefault();
+    window.getSelection()?.removeAllRanges();
+    openTrigger(trigger);
+  });
+  doc.deck.addEventListener('keydown', (event) => {
+    const trigger = storyTrigger(event.target);
+    if (
+      trigger !== event.target ||
+      !['Enter', ' '].includes(event.key) ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.altKey ||
+      event.repeat
+    )
+      return;
+    event.preventDefault();
+    event.stopPropagation();
+    openTrigger(trigger);
+  });
+  // Runtime-only button semantics; export and projections restore the authored attributes.
+  function runtimeValue(node, name, value) {
+    const marker = `data-sf-runtime-original-${name}`;
+    if (value !== null) {
+      if (!node.hasAttribute(marker))
+        node.setAttribute(marker, node.getAttribute(name) ?? '__absent__');
+      node.setAttribute(name, value);
+    } else if (node.hasAttribute(marker)) {
+      const original = node.getAttribute(marker);
+      if (original === '__absent__') node.removeAttribute(name);
+      else node.setAttribute(name, original);
+      node.removeAttribute(marker);
+    }
+  }
+  function configureTriggers(roots = [doc.deck]) {
+    const nodes = roots.flatMap((root) => [
+      ...(root.matches(triggerSelector) ? [root] : []),
+      ...root.querySelectorAll(triggerSelector),
+    ]);
+    for (const node of nodes) {
+      const trigger = storyTrigger(node),
+        target = trigger && doc.deepDiveTarget(trigger);
+      const name = target ? doc.deepDiveName(target) : null;
+      runtimeValue(node, 'role', trigger ? 'button' : null);
+      runtimeValue(node, 'aria-label', trigger ? `Details: ${name || 'Ziel fehlt'}` : null);
+      runtimeValue(
+        node,
+        'title',
+        trigger ? (name ? 'Doppelklick für Details' : 'Deep-Dive-Ziel fehlt') : null,
+      );
+      if (trigger) node.setAttribute('tabindex', '0');
+      if (trigger) node.dataset.sfRuntimeDeepDive = name ? 'ready' : 'broken';
+      else delete node.dataset.sfRuntimeDeepDive;
+    }
+  }
+  function openDeepDive(id, opener = null) {
+    const slide = doc.slide(id);
+    if (!doc.isDeepDive(slide)) {
+      error('Das Deep-Dive-Ziel existiert nicht mehr.');
+      return false;
+    }
+    closeDeepDive(false);
+    closeMenu(false);
+    const name = doc.deepDiveName(slide),
+      frame = previews.frame(slide, `Deep Dive ${name}`);
+    deepDive.querySelector('.sf-deep-dive-stage').replaceChildren(frame);
+    deepDive.querySelector('.sf-deep-dive-name').textContent = name;
+    deepDive.setAttribute('aria-label', `Deep Dive: ${name}`);
+    deepDive.hidden = false;
+    openDive = { id, frame, opener };
+    positionDeepDive();
+    deepDive.querySelector('button').focus({ preventScroll: true });
+    presenter.sync();
+    return true;
+  }
+  function closeDeepDive(focus = true) {
+    if (!openDive) return false;
+    const { frame, opener } = openDive;
+    openDive = null;
+    previews.release(frame);
+    deepDive.hidden = true;
+    if (focus && opener?.isConnected) opener.focus({ preventScroll: true });
+    presenter.sync();
+    return true;
+  }
+  // Scaled to fit the main slide's stage with a visible margin, its name above it.
+  function positionDeepDive() {
+    if (!openDive) return;
+    const rect = doc.deck.getBoundingClientRect(),
+      [header, stage] = deepDive.children,
+      space = header.offsetHeight + 8;
+    const scale = Math.max(
+      0.05,
+      Math.min((rect.width * 0.88) / 1600, (rect.height * 0.88 - space) / 900),
+    );
+    const width = 1600 * scale,
+      height = 900 * scale,
+      left = rect.left + (rect.width - width) / 2,
+      top = rect.top + (rect.height - height + space) / 2;
+    Object.assign(stage.style, {
+      left: `${left}px`,
+      top: `${top}px`,
+      width: `${width}px`,
+      height: `${height}px`,
+    });
+    Object.assign(header.style, {
+      left: `${left}px`,
+      top: `${top - space}px`,
+      width: `${width}px`,
+    });
+    openDive.frame.style.transform = `scale(${scale})`;
+  }
+  deepDive.querySelector('button').addEventListener('click', () => closeDeepDive());
+  deepDive.addEventListener('click', (event) => {
+    if (!deepDive.lastElementChild.contains(event.target) && !event.target.closest('button'))
+      closeDeepDive();
+  });
+  // While open, storyline and editor keys never reach the slide behind the overlay.
+  window.addEventListener(
+    'keydown',
+    (event) => {
+      if (!openDive) return;
+      event.stopPropagation();
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeDeepDive();
+      } else if (event.key === 'Tab') {
+        event.preventDefault();
+        deepDive.querySelector('button').focus({ preventScroll: true });
+      } else if (
+        !(deepDive.contains(event.target) && ['Enter', ' '].includes(event.key)) &&
+        !event.ctrlKey &&
+        !event.metaKey &&
+        !event.altKey
+      )
+        event.preventDefault();
     },
     true,
   );
@@ -1420,6 +1620,10 @@ function startEditor(doc) {
         if (!preferVisible()) renderSlides();
       }
       historyButtons();
+      // Edits reconfigure only the changed objects; structural changes recheck the deck.
+      if (event.structural) configureTriggers();
+      else if (event.objectIds.length)
+        configureTriggers(event.objectIds.map((id) => doc.object(id)).filter(Boolean));
       if (event.inventory) for (const id of event.slideIds) thumbnailCaption(id);
       if (event.metaPaths.length) {
         if (event.phase !== 'commit' || !committingPanel)
@@ -1502,13 +1706,26 @@ function startEditor(doc) {
   resizeObserver.observe(get('.sf-toolbar'));
   resizeObserver.observe(get('.sf-context'));
   resizeObserver.observe(get('.sf-feedback'));
-  const initial = doc
+  let initial = doc
     .slides()
     .findIndex((slide) => `#${encodeURIComponent(slide.dataset.sfSlide)}` === location.hash);
+  // A deep dive's hash opens it above its first trigger's slide, else the first storyline slide.
+  const initialDive = doc.isDeepDive(doc.slides()[initial])
+    ? doc.slides()[initial].dataset.sfSlide
+    : null;
+  if (initialDive) {
+    const host = [...doc.deck.querySelectorAll(triggerSelector)]
+      .filter((node) => node.getAttribute('data-sf-deep-dive-target') === initialDive)
+      .map((node) => node.closest('[data-sf-slide]'))
+      .find((slide) => !doc.isDeepDive(slide));
+    initial = host ? doc.slideIndex(host.dataset.sfSlide) : doc.adjacent(-1, 1);
+  }
   if (initial >= 0) index = initial;
   for (const slide of doc.slides()) slide.dataset.sfRuntimeVisible = 'false';
   interaction.setEditing(false);
+  configureTriggers();
   if (initial >= 0 || !preferVisible()) renderSlides();
+  if (initialDive) openDeepDive(initialDive);
   message(doc.draftMessage || 'Bereit · eine vollständige Präsentation in einer HTML-Datei.');
   if (doc.storageWarning) error(doc.storageWarning);
   document.dispatchEvent(new CustomEvent('sf:ready', { detail: { deckId: doc.meta.deckId } }));

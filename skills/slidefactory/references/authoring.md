@@ -85,6 +85,39 @@ slides use the same history and are checked by `validate` but are not editor
 objects. A link whose target slide was deleted is outlined in edit mode, still
 saves, and is reported by `validate`.
 
+### Deep dives
+
+A deep dive is a detail slide that opens as an overlay above the current slide
+while presenting, so the room keeps one storyline. Mark the detail slide and one
+or more objects on storyline slides that open it:
+
+```html
+<section class="sf-slide" data-sf-slide="costs-detail" data-sf-deep-dive="Kosten im Detail">…</section>
+<div class="surface" data-sf-id="costs-panel" data-sf-kind="box" data-sf-deep-dive-target="costs-detail" style="…">…</div>
+```
+
+- The value of `data-sf-deep-dive` is the name shown in the overlay header, the
+  sidebar (`Deep Dive · <name>`), the presenter and the print appendix. Agree the
+  name with the user while building the slide. An empty value falls back to
+  `Deep Dive n`, counted over deep-dive slides in deck order, so it changes when
+  deep dives move; prefer a real name.
+- A trigger is any editable object (`data-sf-id`) on a storyline slide; its
+  `data-sf-deep-dive-target` names the deep-dive slide ID. A slide may carry
+  several triggers, and several triggers may open the same deep dive. A slide
+  link (`a[data-sf-link]`) to a deep dive also opens the overlay.
+- No nesting: never put a trigger on a deep-dive slide. A deep-dive slide is
+  never also `data-sf-hidden`. Place deep dives at the end of the deck; build them
+  in the deck's design like any slide, with their own notes.
+- The editor never creates names or triggers. `validate` rejects a trigger whose
+  target is missing or not a deep dive, a trigger on a deep dive and a hidden deep
+  dive; `inspect` reports `deepDive` (resolved name) or `deepDiveTargets`.
+
+In view and fullscreen mode a trigger shows a zoom-in cursor and opens its deep
+dive on double-click or Enter/Space; Esc, × or a click outside closes it. Deep
+dives stay out of arrow navigation, the pager, presenter plan and slide numbers
+like hidden slides; edit mode reaches and edits them normally. Printing adds the
+deep dives named on the printed slides as an appendix after them.
+
 Format painter copies compatible typography, paragraph, fill and edge styles
 once to a clicked target; it does not copy content, identifiers, dimensions,
 position, transforms or crop. Escape cancels it. The native screen pipette is
@@ -187,6 +220,9 @@ timer. The value is kept per deck in the browser's localStorage (never in the
 saved HTML; without storage it lasts for the open presentation); × clears it. The popup advances the clock on its own tick, so a
 throttled background main window does not stall the display. Without any
 duration the pace line is hidden.
+
+Editor 1.9.0 opens deep dives as an overlay while presenting, mirrors them in the
+presenter and prints them as an appendix (see [Deep dives](#deep-dives)).
 
 Editor 1.8.0 inserts new text boxes in the design's text font (`--sf-font-text`,
 set by Clean MBB; Arial otherwise) and lists the fonts a design embeds first in the

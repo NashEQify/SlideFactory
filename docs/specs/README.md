@@ -9,5 +9,8 @@ The [map](SPEC-MAP.md) records its consumers.
 [Offline print repair](006-offline-print-repair.md) refines native print geometry,
 preparation and its verification.
 
+[Deep-dive overlay](007-deep-dive-overlay.md) opens marked detail slides as an
+overlay while presenting and prints them as an appendix.
+
 [Reference migration](002-reference-migration.md) extends the common runtime for
 decks in the legacy v19 reference format.

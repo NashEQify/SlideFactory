@@ -140,6 +140,9 @@ slide by its stable ID; they are editable text objects styled by the template.
 After a jump, Backspace or the `↩ Zurück` chip returns to the origin slide, so
 backup slides need no hand-made return links. `validate` reports missing targets;
 read [authoring.md](references/authoring.md#slide-links-and-backup-slides).
+Deep dives are detail slides (`data-sf-deep-dive="<name>"`) that a marked object
+(`data-sf-deep-dive-target`) opens as an overlay while presenting; agree each name
+with the user and read [authoring.md](references/authoring.md#deep-dives).
 Insert images with the landscape-plus icon in the left insertion group. Insert
 blank slides, textboxes and six shapes there too: rectangle, rounded rectangle,
 left/right arrow, oval and line. Resizing rectangles also produces squares.

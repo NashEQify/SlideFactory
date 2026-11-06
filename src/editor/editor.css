@@ -646,6 +646,26 @@ body[data-sf-runtime-editing='true'] #sf-deck [data-sf-kind='text'] {
   #sf-deck > .sf-slide:last-child {
     break-after: auto;
   }
+  /* Deep dives print as an appendix after the storyline; beforeprint omits unnamed ones. */
+  body[data-sf-runtime-running] #sf-deck {
+    display: flex !important;
+    flex-direction: column;
+  }
+  #sf-deck > .sf-slide {
+    flex: none;
+  }
+  #sf-deck > .sf-slide[data-sf-deep-dive] {
+    order: 1;
+  }
+  #sf-deck > .sf-slide[data-sf-runtime-print='omit'] {
+    display: none !important;
+  }
+  #sf-deck:has(> [data-sf-runtime-print-last]) > .sf-slide:last-child {
+    break-after: page;
+  }
+  #sf-deck > .sf-slide[data-sf-runtime-print-last] {
+    break-after: auto !important;
+  }
 }
 /* Note typography is shared with the read-only presenter projection. */
 .sf-note-tools {
@@ -1231,7 +1251,81 @@ body[data-sf-runtime-editing='true']
     padding: 4px 6px;
   }
 }
+/* Deep-dive triggers while presenting, and the overlay above the dimmed slide. */
+body[data-sf-runtime-editing='false'] #sf-deck [data-sf-runtime-deep-dive] {
+  cursor: zoom-in;
+  user-select: none;
+}
+body[data-sf-runtime-editing='false'] #sf-deck [data-sf-runtime-deep-dive='broken'] {
+  cursor: not-allowed;
+}
+body[data-sf-runtime-editing='false'] #sf-deck [data-sf-runtime-deep-dive]:focus-visible {
+  outline: 3px solid var(--sf-accent);
+  outline-offset: 4px;
+}
+#sf-deep-dive {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  background: #0b141acc;
+  backdrop-filter: blur(6px);
+  font:
+    600 16px/1.2 Arial,
+    Helvetica,
+    sans-serif;
+  color: #fff;
+}
+#sf-deep-dive[hidden] {
+  display: none;
+}
+.sf-deep-dive-header {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.sf-deep-dive-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sf-deep-dive-header button {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid #86dbcb;
+  border-radius: 999px;
+  background: #12212bcc;
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+.sf-deep-dive-header button:hover,
+.sf-deep-dive-header button:focus-visible {
+  background: #42636b;
+  outline: 2px solid #86dbcb;
+}
+.sf-deep-dive-stage {
+  position: fixed;
+  overflow: hidden;
+  background: var(--sf-background);
+  box-shadow: 0 10px 40px #0009;
+}
+.sf-deep-dive-stage > iframe {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1600px;
+  height: 900px;
+  border: 0;
+  transform-origin: 0 0;
+  pointer-events: none;
+}
 @media print {
+  #sf-deep-dive,
   #sf-player-controls,
   #sf-return-jump,
   .sf-postit-delete {
