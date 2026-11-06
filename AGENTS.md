@@ -21,4 +21,4 @@ Projektabsicht: [intent.md](intent.md). Benutzung: [skills/slidefactory/SKILL.md
 
 Wartung: `npm run build` erzeugt die eingebetteten Starter aus `src/`; die
 erzeugten Dateien unter `skills/slidefactory/assets/` werden mit eingecheckt.
-Tests: `python3 -m pytest` (Playwright mit Chromium).
+Tests: `python3 -m pytest -n auto` (Playwright mit Chromium, parallel).
