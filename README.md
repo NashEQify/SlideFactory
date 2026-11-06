@@ -5,7 +5,7 @@ Der Agent baut aus deinen Inhalten eine Präsentation als eine Offline-HTML.
 Du öffnest sie im Browser, bearbeitest direkt, präsentierst und speicherst.
 Zur Weiterarbeit gibst du dem Agenten die neueste gespeicherte HTML.
 
-[![CI](https://github.com/NashEQify/SlideFactory/actions/workflows/ci.yml/badge.svg)](https://github.com/NashEQify/SlideFactory/actions/workflows/ci.yml)
+[![CI](https://github.com/NashEQify/SlideFactory/actions/workflows/ci.yml/badge.svg?event=pull_request)](https://github.com/NashEQify/SlideFactory/actions/workflows/ci.yml)
 
 ## Sofort ausprobieren
 
@@ -76,7 +76,7 @@ npm ci
 npm run build
 pip install -r requirements-dev.txt
 python3 -m playwright install chromium
-python3 -m pytest -q
+python3 -m pytest -q -n auto
 ```
 
 Die [CI](.github/workflows/ci.yml) prüft, dass die Startdateien dem Build aus `src/` entsprechen, und führt alle Tests aus.
