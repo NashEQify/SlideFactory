@@ -211,6 +211,50 @@ body {
     color-mix(in srgb, var(--sf-surface) 30%, transparent)
   );
 }
+.sf-slide .agenda-card {
+  overflow: hidden;
+}
+.sf-slide .agenda-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--sf-accent), transparent);
+}
+.sf-slide .agenda-card .sf-link {
+  justify-content: flex-end;
+  padding: 0;
+  border: 0;
+  background: none;
+  font:
+    400 36px/1 Inter,
+    Arial,
+    sans-serif;
+  color: var(--sf-accent);
+}
+.sf-slide .section-head {
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--sf-border);
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--sf-text);
+}
+.sf-slide .section-head.accent {
+  border-color: var(--sf-accent);
+  color: var(--sf-accent);
+}
+.sf-slide .section-head.accent2 {
+  border-color: var(--sf-accent2);
+  color: var(--sf-accent2);
+}
+.sf-slide .surface.accent2 .step-title {
+  color: var(--sf-accent2);
+}
 .sf-slide svg {
   color: var(--sf-accent);
 }
@@ -228,4 +272,26 @@ body {
     Arial,
     sans-serif;
   letter-spacing: 0.04em;
+}
+.sf-slide .agenda-tracker {
+  border: 1px solid var(--sf-border);
+  font-size: 16px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--sf-surface) 45%, transparent);
+}
+.sf-slide .agenda-tracker .sf-link {
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font:
+    600 16px/1 Inter,
+    Arial,
+    sans-serif;
+  letter-spacing: 0.02em;
+  color: var(--sf-muted);
+}
+.sf-slide .agenda-tracker .sf-link.on {
+  background: color-mix(in srgb, var(--sf-accent) 16%, transparent);
+  color: var(--sf-accent);
 }

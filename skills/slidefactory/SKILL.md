@@ -32,7 +32,11 @@ Every starter opens with design overview slides (`data-sf-overview`) that show
 the person its type scale, colors, components and rules; `deck.py new` leaves
 them out of the new deck. Follow the starter's type scale and color roles. In
 Clean MBB, reading text stays at 24 px or more and only markup (kicker, label,
-tag, chip, badge, footer, folio) goes down to 16 px; titles are whole sentences.
+tag, chip, badge, footer, folio, section-head, agenda-tracker) goes down to 16 px;
+titles are whole sentences. Its agenda slide uses `agenda-card` surfaces whose
+arrows are slide links to each chapter's first slide; chapter slides carry an
+`agenda-tracker` box of slide links at the top with `on` on the current chapter.
+Both are plain markup: when chapters change, update every tracker, card and link.
 All six base files include `git@griessing.com` in the HTML author metadata.
 
 For revisions, the user's **latest saved HTML** is the input. Read it before

@@ -28,7 +28,7 @@ STARTERS = {
 }
 OVERVIEW = ["design-type", "design-components", "design-rules"]
 # Clean MBB type floors (task 2): reading text at least 24 px, markup-only roles at least 16 px.
-MBB_MARKUP = {"kicker", "label", "badge", "tag", "chip", "deck-footer", "folio"}
+MBB_MARKUP = {"kicker", "label", "badge", "tag", "chip", "deck-footer", "folio", "section-head", "agenda-tracker"}
 
 
 def _slides(source):
