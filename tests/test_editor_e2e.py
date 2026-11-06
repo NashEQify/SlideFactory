@@ -41,6 +41,8 @@ TEXT_ID = "qa-text"
 BOX_ID = "qa-box"
 BASE_TEXT = "Fixture alpha beta"
 SCHEMES = {"cyan-dark", "cyan-light", "indigo-dark", "indigo-light"}
+# Clean MBB brings its own three looks instead of the shared schemes.
+MBB_SCHEMES = {"night-turquoise", "petrol-amber", "paper-marine"}
 TOKEN_KEYS = {"background", "text", "muted", "accent", "accent2", "surface", "border"}
 
 
@@ -696,7 +698,7 @@ def test_layout_palette_coupling(tmp_path, browser_factory):
         page = browser_factory(_ready(tmp_path, name))
         _edit(page)
         schemes = _json_script(sources[index], "sf-color-schemes")
-        assert set(schemes) == SCHEMES
+        assert set(schemes) == (MBB_SCHEMES if name == "mbb.html" else SCHEMES)
         ids = _object_ids(page)
         frame = _frame(_box(page))
         selector = page.get_by_role("combobox", name="Farbschema", exact=True)
